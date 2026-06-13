@@ -1,39 +1,69 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { Menu } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { navItems } from "@/constants/site";
 import Button from "@/components/ui/Button";
-import MobileMenu from "@/components/navigation/MobileMenu";
 import { cn } from "@/lib/utils";
+
+const MobileMenu = dynamic(() => import("@/components/navigation/MobileMenu"));
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
+  const scrollStateRef = useRef({
+    frame: 0,
+    isHidden: false,
+    isScrolled: false,
+    lastScrollY: 0,
+  });
 
   useEffect(() => {
-    let lastScrollY = window.scrollY;
+    const scrollState = scrollStateRef.current;
+    scrollState.lastScrollY = window.scrollY;
 
     const update = (): void => {
-      const currentScrollY = window.scrollY;
-      const delta = currentScrollY - lastScrollY;
+      scrollState.frame = 0;
 
-      setIsScrolled(currentScrollY > 80);
-      setIsHidden(currentScrollY > 180 && delta > 16);
+      const currentScrollY = window.scrollY;
+      const delta = currentScrollY - scrollState.lastScrollY;
+      const nextIsScrolled = currentScrollY > 80;
+      let nextIsHidden = currentScrollY > 180 && delta > 16;
 
       if (delta < 0) {
-        setIsHidden(false);
+        nextIsHidden = false;
       }
 
-      lastScrollY = currentScrollY;
+      if (scrollState.isScrolled !== nextIsScrolled) {
+        scrollState.isScrolled = nextIsScrolled;
+        setIsScrolled(nextIsScrolled);
+      }
+
+      if (scrollState.isHidden !== nextIsHidden) {
+        scrollState.isHidden = nextIsHidden;
+        setIsHidden(nextIsHidden);
+      }
+
+      scrollState.lastScrollY = currentScrollY;
+    };
+
+    const scheduleUpdate = (): void => {
+      if (scrollState.frame) return;
+      scrollState.frame = window.requestAnimationFrame(update);
     };
 
     update();
-    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
 
-    return () => window.removeEventListener("scroll", update);
+    return () => {
+      if (scrollState.frame) {
+        window.cancelAnimationFrame(scrollState.frame);
+      }
+      window.removeEventListener("scroll", scheduleUpdate);
+    };
   }, []);
 
   return (
@@ -63,11 +93,26 @@ export default function Navbar() {
               <div key={item.label} className="group relative">
                 <a
                   href={item.href}
-                  className="flex items-center gap-1 text-[13px] font-bold text-text/80 transition hover:text-primary uppercase tracking-wide py-4"
+                  className={cn(
+                    "flex items-center gap-1 py-4 text-[13px] font-bold uppercase tracking-wide transition",
+                    isScrolled
+                      ? "text-text/80 hover:text-primary"
+                      : "text-white/90 drop-shadow-sm hover:text-white"
+                  )}
                 >
                   {item.label}
                   {item.subItems && (
-                    <svg className="w-3.5 h-3.5 text-text/50 group-hover:text-primary transition-transform group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg
+                      className={cn(
+                        "h-3.5 w-3.5 transition-transform group-hover:rotate-180",
+                        isScrolled
+                          ? "text-text/50 group-hover:text-primary"
+                          : "text-white/70 group-hover:text-white"
+                      )}
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   )}
@@ -108,7 +153,9 @@ export default function Navbar() {
         </div>
       </header>
 
-      <MobileMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+      {isMenuOpen ? (
+        <MobileMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+      ) : null}
     </>
   );
 }

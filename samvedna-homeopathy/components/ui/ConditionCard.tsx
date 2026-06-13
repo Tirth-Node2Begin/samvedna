@@ -28,8 +28,8 @@ type ConditionCardProps = {
 };
 
 const cardReveal = {
-  initial: { opacity: 0, y: 34, scale: 0.96, filter: "blur(10px)" },
-  animate: { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }
+  initial: { opacity: 0, y: 34, scale: 0.96 },
+  animate: { opacity: 1, y: 0, scale: 1 }
 } as const;
 
 const contentReveal = {

@@ -1,26 +1,27 @@
-import ConditionsTreated from "@/components/sections/ConditionsTreated";
-import DoctorAchievements from "@/components/sections/DoctorAchievements";
-import FAQ from "@/components/sections/FAQ";
-import FinalCTA from "@/components/sections/FinalCTA";
-import Footer from "@/components/sections/Footer";
-import FounderStory from "@/components/sections/FounderStory";
+import dynamic from "next/dynamic";
 import Hero from "@/components/sections/Hero";
 import DoctorIntro from "@/components/sections/DoctorIntro";
-import InternationalReach from "@/components/sections/InternationalReach";
-import MedicalTeam from "@/components/sections/MedicalTeam";
-import TestimonialsLazy from "@/components/sections/TestimonialsLazy";
-import TreatmentJourney from "@/components/sections/TreatmentJourney";
+import DoctorScrollAvatar from "@/components/sections/DoctorScrollAvatar";
 import TrustBar from "@/components/sections/TrustBar";
-import WhyFamiliesTrust from "@/components/sections/WhyFamiliesTrust";
-import Pricing from "@/components/sections/Pricing";
 
-import { LayoutGroup } from "framer-motion";
+const ConditionsTreated = dynamic(() => import("@/components/sections/ConditionsTreated"));
+const DoctorAchievements = dynamic(() => import("@/components/sections/DoctorAchievements"));
+const WhyFamiliesTrust = dynamic(() => import("@/components/sections/WhyFamiliesTrust"));
+const TreatmentJourney = dynamic(() => import("@/components/sections/TreatmentJourney"));
+const MedicalTeam = dynamic(() => import("@/components/sections/MedicalTeam"));
+const InternationalReach = dynamic(() => import("@/components/sections/InternationalReach"));
+const TestimonialsLazy = dynamic(() => import("@/components/sections/TestimonialsLazy"));
+const Pricing = dynamic(() => import("@/components/sections/Pricing"));
+const FinalCTA = dynamic(() => import("@/components/sections/FinalCTA"));
+const FAQ = dynamic(() => import("@/components/sections/FAQ"));
+const Footer = dynamic(() => import("@/components/sections/Footer"));
 
 export default function Home() {
   return (
-    <LayoutGroup>
+    <>
       <Hero />
       <DoctorIntro />
+      <DoctorScrollAvatar />
       <TrustBar />
       <ConditionsTreated />
       {/* <FounderStory /> */}
@@ -34,6 +35,6 @@ export default function Home() {
       <FinalCTA />
       <FAQ />
       <Footer />
-    </LayoutGroup>
+    </>
   );
 }

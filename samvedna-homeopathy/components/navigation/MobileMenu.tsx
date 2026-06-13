@@ -30,7 +30,6 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                 alt="Samvedna Homeopathy"
                 width={126}
                 height={40}
-                priority
               />
             </a>
             <button

@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import { motion, useMotionValue, useTransform, useSpring, useScroll, useMotionValueEvent } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import Image from "next/image";
-import { Star, Users, Globe, Award, Sparkles, Shield, Stethoscope, ScrollText, HeartPulse, Activity } from "lucide-react";
+import { Activity, HeartPulse, Stethoscope } from "lucide-react";
 import useReducedMotion from "@/hooks/useReducedMotion";
 
 
@@ -17,8 +17,8 @@ interface GlassCardProps {
 function GlassCard({ children, className = "", delay = 0 }: GlassCardProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 24, scale: 0.96, filter: "blur(8px)" }}
-      animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+      initial={{ opacity: 0, y: 24, scale: 0.96 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] }}
       className={`relative rounded-2xl border border-white/20 bg-white/10 p-4 shadow-[0_8px_32px_rgba(0,0,0,0.18)] backdrop-blur-xl ${className}`}
     >
@@ -30,24 +30,9 @@ function GlassCard({ children, className = "", delay = 0 }: GlassCardProps) {
 }
 
 /* ─── floating pill badge ─── */
-function Pill({ icon: Icon, text }: { icon: React.ElementType<{ className?: string }>; text: string }) {
-  return (
-    <div className="flex items-center gap-1.5 rounded-full border border-white/25 bg-white/15 px-3 py-1 backdrop-blur-md">
-      <Icon className="h-3 w-3 text-cyan-300" />
-      <span className="text-[11px] font-semibold text-white/90">{text}</span>
-    </div>
-  );
-}
-
 export default function Hero() {
   const prefersReducedMotion = useReducedMotion();
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const [isScrolled, setIsScrolled] = React.useState(false);
-  const { scrollY } = useScroll();
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    setIsScrolled(latest > 50);
-  });
 
   /* ── mouse parallax ── */
   const mouseX = useMotionValue(0);
@@ -66,15 +51,35 @@ export default function Hero() {
 
   useEffect(() => {
     if (prefersReducedMotion) return;
-    const handleMouse = (e: MouseEvent) => {
+    if (!window.matchMedia("(pointer: fine)").matches) return;
+
+    let frameId = 0;
+    let nextX = 0;
+    let nextY = 0;
+
+    const commit = (): void => {
+      frameId = 0;
+      mouseX.set(nextX);
+      mouseY.set(nextY);
+    };
+
+    const handlePointer = (e: PointerEvent) => {
       const el = containerRef.current;
       if (!el) return;
       const rect = el.getBoundingClientRect();
-      mouseX.set((e.clientX - rect.left) / rect.width - 0.5);
-      mouseY.set((e.clientY - rect.top) / rect.height - 0.5);
+      nextX = (e.clientX - rect.left) / rect.width - 0.5;
+      nextY = (e.clientY - rect.top) / rect.height - 0.5;
+
+      if (!frameId) {
+        frameId = window.requestAnimationFrame(commit);
+      }
     };
-    window.addEventListener("mousemove", handleMouse);
-    return () => window.removeEventListener("mousemove", handleMouse);
+    window.addEventListener("pointermove", handlePointer, { passive: true });
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      window.removeEventListener("pointermove", handlePointer);
+    };
   }, [prefersReducedMotion, mouseX, mouseY]);
 
   return (
@@ -90,18 +95,18 @@ export default function Hero() {
           style={prefersReducedMotion ? {} : { x: bgXS, y: bgYS }}
           className="absolute inset-0 scale-[1.10]"
         >
-        <Image
-          src="/images/hero.png"
-          alt=""
-          fill
-          priority
-          fetchPriority="high"
-          sizes="100vw"
-          className="object-cover object-center blur-sm"
-        />
-        {/* cinematic overlay gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a1628]/40 via-transparent to-[#0a1628]/55" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0a1628]/30 via-transparent to-[#0a1628]/30" />
+          <Image
+            src="/images/hero.webp"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            unoptimized
+            className="object-cover object-center blur-[6px]"
+          />
+          {/* cinematic overlay gradient */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0a1628]/40 via-transparent to-[#0a1628]/55" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0a1628]/30 via-transparent to-[#0a1628]/30" />
         </motion.div>
       </div>
 
@@ -113,11 +118,7 @@ export default function Hero() {
         }}
       />
 
-      <div
-        className="pointer-events-none absolute inset-0 -z-10 opacity-[0.03]"
-        style={{ backgroundImage: "url('/images/noise.png')", backgroundRepeat: "repeat" }}
-      />
-      
+
       {/* ─────────── MAIN LAYOUT ─────────── */}
       <div className="relative mx-auto flex min-h-[100svh] max-w-[1400px] flex-col items-center justify-center px-4 py-8 sm:px-8">
 
@@ -132,13 +133,6 @@ export default function Hero() {
           >
 
             {/* ─── FLOATING AMBIENT ICONS ─── */}
-            <motion.div
-              animate={prefersReducedMotion ? {} : { y: [0, -15, 0], rotate: [0, 5, 0] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-              className="absolute left-[45%] top-[10%] z-0 flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/5 backdrop-blur-md"
-            >
-              <ScrollText className="h-5 w-5 text-cyan-200/60" />
-            </motion.div>
             <motion.div
               animate={prefersReducedMotion ? {} : { y: [0, 20, 0], rotate: [0, -10, 0] }}
               transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 2 }}
@@ -162,9 +156,9 @@ export default function Hero() {
             </motion.div>
 
             {/* ─── LEFT TOP GLASS CARD ("What is Samvedna?") ─── */}
-            <div className="order-1 relative lg:absolute lg:left-4 lg:top-4 z-20 w-[90%] max-w-[400px] lg:w-[280px]">
-              <GlassCard delay={0.1} className="flex min-h-[160px] lg:min-h-[240px] flex-col justify-center">
-                <h3 className="mb-4 text-sm font-bold tracking-widest text-cyan-300 uppercase">What is Samvedna?</h3>
+            <div className="order-2 relative z-20 w-[90%] max-w-[400px] sm:order-1 lg:absolute lg:left-4 lg:top-4 lg:w-[280px]">
+              <GlassCard delay={0.1} className="flex flex-col justify-start py-6 px-5">
+                <h3 className="mb-3 text-sm font-bold tracking-widest text-cyan-300 uppercase">What is Samvedna?</h3>
                 <p className="text-[14px] leading-relaxed text-white/80">
                   A dedicated center for world-class homeopathy and child psychiatry, focusing on holistic development.
                 </p>
@@ -172,70 +166,24 @@ export default function Hero() {
             </div>
 
             {/* ─── RIGHT TOP GLASS CARD ("Branding / Promise") ─── */}
-            <div className="order-2 relative lg:absolute lg:right-4 lg:top-4 z-20 w-[90%] max-w-[400px] lg:w-[260px]">
+            <div className="order-3 relative z-20 w-[90%] max-w-[400px] sm:order-2 lg:absolute lg:right-4 lg:top-4 lg:w-[260px]">
               <GlassCard delay={0.2} className="flex min-h-[140px] flex-col justify-center">
                 <h3 className="mb-3 text-sm font-bold tracking-widest text-emerald-300 uppercase">Our Promise</h3>
                 <p className="text-[13px] leading-relaxed text-white/80">
-                  Safe, natural, and side-effect-free homeopathic treatments perfectly tailored for your child's unique needs.
+                  Safe, natural, and side-effect-free homeopathic treatments perfectly tailored for your child&apos;s unique needs.
                 </p>
               </GlassCard>
             </div>
 
             {/* ─── RIGHT BOTTOM (Doctor Image & Experience) ─── */}
             <div className="order-4 relative lg:absolute lg:bottom-16 lg:right-0 z-30 flex flex-col items-center w-[210px] min-h-[300px] mt-8 lg:mt-0">
-               {/* 
-                 We render the avatar only if NOT scrolled. 
-                 If scrolled > 50px, it unmounts and Framer Motion layoutId 
-                 animates it to the DoctorIntro section!
-               */}
-               {!isScrolled && (
-                  <motion.div
-                    layoutId="doctor-avatar-container"
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                    className="relative flex flex-col items-center w-full"
-                  >
-                {/* experience badge floating near doctor (Top Right) */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.4, delay: 0.4 }}
-                  className="absolute -right-10 -top-2 z-40 flex items-center gap-2 rounded-xl border border-white/15 bg-white/10 px-3 py-2 backdrop-blur-xl shadow-lg"
-                >
-                  <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-amber-400/20">
-                    <Award className="h-3 w-3 text-amber-400" />
-                  </div>
-                  <div>
-                    <p className="text-[11px] font-bold text-white">20+ Years</p>
-                    <p className="text-[10px] text-white/55">Experience</p>
-                  </div>
-                </motion.div>
-
-                {/* Doctor Image */}
-                <motion.div layoutId="doctor-img" className="relative w-[210px] h-[280px]">
-                  <Image
-                    src="/images/dr-krunal-kosada-removebg-preview.png"
-                    alt="Dr. Krunal Kosada"
-                    fill
-                    priority
-                    className="object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.4)]"
-                  />
-                </motion.div>
-
-                {/* Name Label */}
-                <motion.div layoutId="doctor-name" className="absolute -bottom-4 flex flex-col items-center whitespace-nowrap rounded-full border border-white/20 bg-[#0c1e35]/80 px-5 py-2 shadow-xl backdrop-blur-md">
-                  <p className="text-sm font-black text-white">Dr. Krunal Kosada</p>
-                  <p className="text-[10px] font-semibold tracking-wide text-cyan-300 uppercase">Founder &amp; Chief Consultant</p>
-                </motion.div>
-              </motion.div>
-              )}
+              <div data-doctor-avatar-origin className="relative h-[280px] w-[210px]" aria-hidden="true" />
             </div>
 
             {/* ─── CENTER SWAN / CHARACTER ─── */}
             <motion.div
               style={prefersReducedMotion ? {} : { x: swanXS, y: swanYS }}
-              className="order-3 relative z-10 mx-auto flex w-full max-w-[600px] items-center justify-center h-[350px] lg:h-[500px]"
+              className="order-1 relative z-10 mx-auto flex h-[350px] w-full max-w-[600px] items-center justify-center sm:order-3 lg:h-[500px]"
             >
               {/* glow beneath swan */}
               <div
@@ -254,11 +202,12 @@ export default function Hero() {
                 className="relative"
               >
                 <Image
-                  src="/images/samvedna-logo-swan.png"
+                  src="/images/samvedna-logo-swan.webp"
                   alt="Samvedna Homeopathy — Swan symbol of healing"
                   width={480}
                   height={520}
                   priority
+                  unoptimized
                   className="relative z-10 drop-shadow-[0_40px_80px_rgba(0,196,196,0.4)]"
                   style={{ filter: "drop-shadow(0 0 60px rgba(0,196,196,0.25))" }}
                 />

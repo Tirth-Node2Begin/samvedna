@@ -1,6 +1,6 @@
 export const fadeUp = {
-  initial: { opacity: 0, y: 28, filter: "blur(8px)" },
-  animate: { opacity: 1, y: 0, filter: "blur(0px)" },
+  initial: { opacity: 0, y: 28 },
+  animate: { opacity: 1, y: 0 },
   transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] }
 } as const;
 
@@ -11,8 +11,8 @@ export const fadeIn = {
 } as const;
 
 export const scaleIn = {
-  initial: { opacity: 0, scale: 0.96, filter: "blur(8px)" },
-  animate: { opacity: 1, scale: 1, filter: "blur(0px)" },
+  initial: { opacity: 0, scale: 0.96 },
+  animate: { opacity: 1, scale: 1 },
   transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] }
 } as const;
 
@@ -21,14 +21,14 @@ export const staggerContainer = {
 } as const;
 
 export const slideLeft = {
-  initial: { opacity: 0, x: 36, filter: "blur(8px)" },
-  animate: { opacity: 1, x: 0, filter: "blur(0px)" },
+  initial: { opacity: 0, x: 36 },
+  animate: { opacity: 1, x: 0 },
   transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] }
 } as const;
 
 export const slideRight = {
-  initial: { opacity: 0, x: -36, filter: "blur(8px)" },
-  animate: { opacity: 1, x: 0, filter: "blur(0px)" },
+  initial: { opacity: 0, x: -36 },
+  animate: { opacity: 1, x: 0 },
   transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] }
 } as const;
 
@@ -43,7 +43,7 @@ export const textRevealContainer = {
 } as const;
 
 export const textRevealWord = {
-  initial: { opacity: 0, y: 18, filter: "blur(6px)" },
-  animate: { opacity: 1, y: 0, filter: "blur(0px)" },
+  initial: { opacity: 0, y: 18 },
+  animate: { opacity: 1, y: 0 },
   transition: { duration: 0.62, ease: [0.22, 1, 0.36, 1] }
 } as const;

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { Globe2, MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
 import Image from "next/image";
 
 /* ─── Planets representing countries ─── */
@@ -72,6 +72,10 @@ function PlanetNode({ p }: { p: (typeof planets)[number] }) {
               <img
                 src={`https://flagcdn.com/${p.code}.svg`}
                 alt={`${p.name} flag`}
+                width={24}
+                height={24}
+                loading="lazy"
+                decoding="async"
                 className="absolute inset-0 h-full w-full object-cover"
               />
             </div>
@@ -136,12 +140,12 @@ export default function WorldMap() {
             />
             
             <Image
-              src="/images/samvedna-logo-swan.png"
+              src="/images/samvedna-logo-swan.webp"
               alt="Samvedna Swan Logo"
               width={64}
               height={64}
               className="object-contain drop-shadow-sm"
-              priority
+              unoptimized
             />
           </div>
         </div>
@@ -157,10 +161,11 @@ export default function WorldMap() {
         <div className="flex items-center gap-4 rounded-2xl bg-gradient-to-br from-primary/[0.04] to-transparent p-5 border border-primary/10">
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-sm ring-2 ring-primary/10">
              <Image
-              src="/images/samvedna-logo-swan.png"
+              src="/images/samvedna-logo-swan.webp"
               alt="Samvedna Swan Logo"
               width={32}
               height={32}
+              unoptimized
               className="object-contain"
             />
           </div>
@@ -184,6 +189,10 @@ export default function WorldMap() {
                 <img
                   src={`https://flagcdn.com/${d.code}.svg`}
                   alt={`${d.name} flag`}
+                  width={40}
+                  height={40}
+                  loading="lazy"
+                  decoding="async"
                   className="absolute inset-0 h-full w-full object-cover"
                 />
               </div>
