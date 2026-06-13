@@ -1,0 +1,48 @@
+   ▲ Next.js 15.5.19
+   - Local:        http://127.0.0.1:3001
+   - Network:      http://127.0.0.1:3001
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 1975ms
+ ○ Compiling / ...
+ ✓ Compiled / in 4.3s (1939 modules)
+ GET / 200 in 5084ms
+ ✓ Compiled in 724ms (835 modules)
+ ✓ Compiled in 467ms (835 modules)
+ ✓ Compiled in 289ms (835 modules)
+ ✓ Compiled in 321ms (835 modules)
+ ✓ Compiled in 503ms (835 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 635ms (1090 modules)
+ GET / 200 in 1932ms
+ GET / 200 in 899ms
+ ✓ Compiled in 826ms (835 modules)
+ ✓ Compiled in 471ms (835 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 874ms (1090 modules)
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 4s (2264 modules)
+ GET / 500 in 8059ms
+ GET / 500 in 691ms
+ ✓ Compiled in 1182ms (1101 modules)
+ ✓ Compiled in 783ms (993 modules)
+ ✓ Compiled in 770ms (993 modules)
+ ✓ Compiled in 985ms (993 modules)
+ ✓ Compiled in 667ms (993 modules)
+ ✓ Compiled in 557ms (993 modules)
+ ✓ Compiled in 594ms (993 modules)
+ ✓ Compiled in 506ms (993 modules)
+ ✓ Compiled in 694ms (993 modules)
+ ✓ Compiled in 542ms (993 modules)
+ ✓ Compiled in 806ms (995 modules)
+ ✓ Compiled in 936ms (995 modules)
+ ✓ Compiled in 765ms (995 modules)
+ ✓ Compiled in 801ms (995 modules)
+ ✓ Compiled in 998ms (995 modules)
+ ✓ Compiled in 547ms (995 modules)
+ ✓ Compiled in 650ms (995 modules)
+ ✓ Compiled in 836ms (995 modules)
+ ✓ Compiled in 1133ms (995 modules)
+ ✓ Compiled in 650ms (995 modules)
+[ELIFECYCLE] Command failed with exit code 1073807364.
