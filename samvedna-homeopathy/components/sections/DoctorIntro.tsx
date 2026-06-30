@@ -26,7 +26,7 @@ export default function DoctorIntro() {
 
         {/* Center Layout Container */}
         <div className="relative flex flex-col items-center justify-center lg:flex-row lg:justify-between lg:gap-10">
-          
+
           {/* Left Side Data */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}

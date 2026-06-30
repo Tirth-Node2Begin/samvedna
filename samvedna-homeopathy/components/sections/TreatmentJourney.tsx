@@ -62,20 +62,26 @@ export default function TreatmentJourney() {
               className="flex transition-transform duration-1000 ease-in-out"
               style={{ transform: `translateX(-${currentIndex * (100 / extendedSteps.length)}%)`, width: "max-content" }}
             >
-              {extendedSteps.map((step, idx) => {
-                // The center card is always currentIndex + 1
+              {extendedSteps.map((_, idx) => {
+                // The center card is always currentIndex + 1. Shift the step
+                // mapping by one so the first centered card is step 1 (01).
+                const stepIndex =
+                  ((idx - 1) % journeySteps.length + journeySteps.length) %
+                  journeySteps.length;
+                const step = journeySteps[stepIndex];
                 const isCenter = idx === currentIndex + 1;
+                const displayNumber = String(stepIndex + 1).padStart(2, "0");
 
                 return (
-                  <div 
-                    key={`${step.title}-${idx}`} 
+                  <div
+                    key={`${step.title}-${idx}`}
                     className="w-[33.333333vw] max-w-[400px] flex-shrink-0 px-4"
                   >
-                    <article 
+                    <article
                       className={cn(
                         "relative flex min-h-[320px] flex-col justify-between rounded-[2rem] border p-8 transition-all duration-1000",
-                        isCenter 
-                          ? "scale-105 border-primary/20 bg-white shadow-2xl ring-4 ring-primary/5" 
+                        isCenter
+                          ? "scale-105 border-primary/20 bg-white shadow-2xl ring-4 ring-primary/5"
                           : "scale-90 border-transparent bg-white/40 opacity-40 grayscale-[30%]"
                       )}
                     >
@@ -84,7 +90,7 @@ export default function TreatmentJourney() {
                           "font-display text-5xl font-bold transition-colors duration-1000",
                           isCenter ? "text-primary" : "text-primary/20"
                         )}>
-                          {String((idx % journeySteps.length) + 1).padStart(2, "0")}
+                          {displayNumber}
                         </p>
                         <h3 className="mt-6 font-display text-2xl font-bold leading-tight text-text">
                           {step.title}

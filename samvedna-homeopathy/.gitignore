@@ -38,3 +38,5 @@ next-dev.log
 
 # PHP storage (inquiry data)
 core-php/storage/inquiries.jsonl
+
+.vercel

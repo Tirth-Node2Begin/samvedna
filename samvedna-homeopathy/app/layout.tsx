@@ -20,7 +20,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${interTight.variable} ${dmSans.variable}`}
+      className={`${inter.variable} ${interTight.variable} ${dmSans.variable} overflow-x-hidden`}
       suppressHydrationWarning
     >
       <head>
@@ -32,7 +32,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           />
         ))}
       </head>
-      <body className="font-body antialiased" suppressHydrationWarning>
+      <body className="font-body antialiased overflow-x-hidden" suppressHydrationWarning>
         <LenisProvider>
           <AnimationProvider>
             <Navbar />

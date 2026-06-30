@@ -4,6 +4,7 @@ import {
   consultationSchema,
   type ConsultationInput
 } from "@/lib/schemas/consultation";
+import { saveInquiry } from "@/lib/db/inquiries";
 
 type FieldErrors = Partial<Record<keyof ConsultationInput, string[]>>;
 
@@ -19,11 +20,16 @@ export type BookingActionResult =
       fieldErrors?: FieldErrors;
     };
 
-function formValue(formData: FormData, key: keyof ConsultationInput): FormDataEntryValue | null {
+function formValue(formData: FormData, key: string): FormDataEntryValue | null {
   return formData.get(key);
 }
 
-const PHP_API_URL = process.env.PHP_ADMIN_URL || "http://localhost:8080";
+const ALLOWED_SOURCES = new Set(["website", "popup"]);
+
+function readSource(formData: FormData): string {
+  const raw = formData.get("source");
+  return typeof raw === "string" && ALLOWED_SOURCES.has(raw) ? raw : "website";
+}
 
 export async function submitBooking(
   formData: FormData
@@ -48,19 +54,7 @@ export async function submitBooking(
   }
 
   try {
-    const response = await fetch(`${PHP_API_URL}/api/inquiry.php`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(parsed.data)
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => null);
-      return {
-        status: "error",
-        message: errorData?.message || "Failed to submit inquiry. Please try again."
-      };
-    }
+    await saveInquiry(parsed.data, readSource(formData));
 
     return {
       status: "success",
@@ -72,7 +66,7 @@ export async function submitBooking(
     console.error("Booking submission error:", error);
     return {
       status: "error",
-      message: "Unable to reach the server. Please try again later."
+      message: "Unable to save your request right now. Please try again or call us."
     };
   }
 }
