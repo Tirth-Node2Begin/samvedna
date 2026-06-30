@@ -1,51 +1,9 @@
 import type { TeamMember } from "@/types";
 
 // NOTE: `specialization`, `experience` and the `profile` block below are
-// editable content. Dr. Krunal Kosada's details reflect the existing site
-// copy; for the other consultants the experience figures and profile copy
-// are sensible placeholders — update them with verified information.
+// editable content. The experience figures and profile copy are sensible
+// placeholders — update them with verified information.
 const team: TeamMember[] = [
-  {
-    name: "Dr. Krunal Kosada",
-    title: "Founder & Lead Clinician",
-    credential: "BHMS, FCAH | 20+ years of pediatric neurodevelopmental care",
-    image: "/images/dr-krunal-kosada.jpg",
-    alt: "Dr. Krunal Kosada, founder of Samvedna Homeopathy",
-    specialization: "Pediatric Neurodevelopmental Homeopathy",
-    experience: "20+ Years",
-    summary:
-      "Leads individualized homeopathic care for autism, ADHD, speech delay and developmental concerns.",
-    profile: {
-      qualifications: ["BHMS", "FCAH (Fellowship in Classical & Advanced Homeopathy)"],
-      about:
-        "Dr. Krunal Kosada built Samvedna for families navigating autism, ADHD, speech delay, learning difficulty, developmental delay, genetic concerns and pediatric neurological disorders. The clinical focus is simple and demanding: understand the whole child, create a personalized plan, and stay close through continuous follow-ups as parents track progress over time.",
-      specializations: [
-        "Autism Spectrum Disorder",
-        "ADHD & attention concerns",
-        "Speech & developmental delay",
-        "Learning difficulty",
-        "Pediatric neurological disorders"
-      ],
-      treatments: [
-        "Individualized homeopathic care plans",
-        "Behaviour, sleep & sensory support",
-        "Parent guidance and home strategies",
-        "Structured follow-up and progress reviews"
-      ],
-      certifications: [
-        "President, HMAI Surat Unit",
-        "Fellowship in Classical & Advanced Homeopathy"
-      ],
-      awards: [
-        "Guest Speaker — Hellenic Homeopathic Medical Society, Greece",
-        "Key Presenter — 3rd International AYUSH Exhibition & Conference, Dubai",
-        "Global Scientific Presenter — LMHI Congresses & JAHC San Antonio"
-      ],
-      languages: ["English", "Hindi", "Gujarati"],
-      consultation:
-        "Online & in-clinic consultations · Monday to Saturday, 10 am to 7 pm · By appointment."
-    }
-  },
   {
     name: "Dr. Krishna Thakor",
     title: "Senior Consultant",

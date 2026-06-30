@@ -12,7 +12,7 @@ export default function DoctorsGrid() {
 
   return (
     <>
-      <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+      <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
         {team.map((member, index) => (
           <AnimatedReveal key={member.name} className="h-full w-full" delay={index * 0.08}>
             <DoctorCard member={member} onSelect={() => setActiveDoctor(member)} />
