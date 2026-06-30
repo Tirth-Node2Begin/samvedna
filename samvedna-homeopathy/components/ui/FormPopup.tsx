@@ -33,7 +33,7 @@ export default function FormPopup() {
 
   return (
     <Modal open={open} onClose={() => setOpen(false)} ariaLabel="Book a consultation" className="max-w-2xl">
-      <div className="p-6 sm:p-8 md:p-10">
+      <div className="p-6 sm:p-8">
         <ConsultationForm source="popup" />
       </div>
     </Modal>

@@ -49,11 +49,18 @@ export type BlogPost = {
   href: string;
 };
 
-export type Testimonial = {
-  quote: string;
+export type VideoTestimonial = {
+  /** YouTube video id (the part after `watch?v=`). Leave empty to show the
+   *  poster with a "coming soon" fallback instead of an embedded player. */
+  youtubeId: string;
+  /** Local poster/thumbnail image shown before the video plays. */
+  poster: string;
+  alt: string;
   name: string;
   condition: string;
   location: string;
+  /** Optional duration label shown on the card, e.g. "2:14". */
+  duration?: string;
 };
 
 export type FaqItem = {

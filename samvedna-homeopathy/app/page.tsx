@@ -10,7 +10,7 @@ const WhyFamiliesTrust = dynamic(() => import("@/components/sections/WhyFamilies
 const TreatmentJourney = dynamic(() => import("@/components/sections/TreatmentJourney"));
 const MedicalTeam = dynamic(() => import("@/components/sections/MedicalTeam"));
 const InternationalReach = dynamic(() => import("@/components/sections/InternationalReach"));
-const TestimonialsLazy = dynamic(() => import("@/components/sections/TestimonialsLazy"));
+const VideoTestimonialsLazy = dynamic(() => import("@/components/sections/VideoTestimonialsLazy"));
 const Blogs = dynamic(() => import("@/components/sections/Blogs"));
 const Pricing = dynamic(() => import("@/components/sections/Pricing"));
 const FinalCTA = dynamic(() => import("@/components/sections/FinalCTA"));
@@ -31,7 +31,7 @@ export default function Home() {
       <TreatmentJourney />
       <MedicalTeam />
       <InternationalReach />
-      <TestimonialsLazy />
+      <VideoTestimonialsLazy />
       <Blogs />
       <Pricing />
       <FinalCTA />

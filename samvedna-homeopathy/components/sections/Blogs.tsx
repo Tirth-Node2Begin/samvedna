@@ -1,7 +1,6 @@
 import AnimatedReveal from "@/components/ui/AnimatedReveal";
 import AnimatedText from "@/components/ui/AnimatedText";
-import BlogCard from "@/components/ui/BlogCard";
-import { blogPosts } from "@/constants/blogs";
+import BlogsCarousel from "@/components/ui/BlogsCarousel";
 
 export default function Blogs() {
   return (
@@ -22,13 +21,9 @@ export default function Blogs() {
           </p>
         </AnimatedReveal>
 
-        <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
-          {blogPosts.map((post, index) => (
-            <AnimatedReveal key={post.slug} className="h-full w-full" delay={Math.min(index * 0.06, 0.3)}>
-              <BlogCard post={post} />
-            </AnimatedReveal>
-          ))}
-        </div>
+        <AnimatedReveal>
+          <BlogsCarousel />
+        </AnimatedReveal>
       </div>
     </section>
   );

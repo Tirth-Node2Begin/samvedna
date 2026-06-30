@@ -21,7 +21,7 @@ import Button from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
 const fieldClassName =
-  "mt-2 block w-full rounded-xl border border-border bg-bg px-4 py-3 text-base text-text shadow-sm transition-all placeholder:text-muted/60 hover:border-primary/50 focus:border-primary focus:bg-white focus:outline-none focus:ring-4 focus:ring-primary/10";
+  "mt-1.5 block w-full rounded-xl border border-border bg-bg px-4 py-2.5 text-base text-text shadow-sm transition-all placeholder:text-muted/60 hover:border-primary/50 focus:border-primary focus:bg-white focus:outline-none focus:ring-4 focus:ring-primary/10";
 
 type FormErrorProps = {
   error?: string;
@@ -121,10 +121,10 @@ export default function ConsultationForm({ source = "website" }: ConsultationFor
       className="flex w-full flex-col text-left"
       noValidate
     >
-      <div className="mb-10 flex flex-col gap-3 border-b border-border/60 pb-6">
+      <div className="mb-6 flex flex-col gap-2 border-b border-border/60 pb-5 pr-12">
         <div>
           <p className="text-sm font-semibold uppercase tracking-wider text-primary">Consultation request</p>
-          <h3 className="mt-2 font-display text-2xl font-semibold text-text md:text-3xl">
+          <h3 className="mt-1.5 font-display text-xl font-semibold text-text md:text-2xl">
             Tell us what your child needs help with.
           </h3>
         </div>
@@ -133,7 +133,7 @@ export default function ConsultationForm({ source = "website" }: ConsultationFor
         </p>
       </div>
 
-      <fieldset disabled={disabled} className="grid gap-5 md:grid-cols-2">
+      <fieldset disabled={disabled} className="grid gap-x-5 gap-y-4 md:grid-cols-2">
         <label className="block">
           <span className="text-sm font-semibold text-text">Parent name</span>
           <input
@@ -240,7 +240,7 @@ export default function ConsultationForm({ source = "website" }: ConsultationFor
           <textarea
             {...register("message")}
             aria-describedby={errors.message ? errorId("message") : undefined}
-            className={cn(fieldClassName, "min-h-[140px] resize-none leading-relaxed")}
+            className={cn(fieldClassName, "min-h-[104px] resize-none leading-relaxed")}
             placeholder="Briefly share speech, attention, behavior, sleep, learning, therapy, or report details."
             suppressHydrationWarning
           />
@@ -248,7 +248,7 @@ export default function ConsultationForm({ source = "website" }: ConsultationFor
         </label>
       </fieldset>
 
-      <div className="mt-7 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div className="mt-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <Button
           type="submit"
           size="lg"
