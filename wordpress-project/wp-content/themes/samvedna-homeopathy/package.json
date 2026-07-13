@@ -1,0 +1,14 @@
+{
+  "name": "samvedna-homeopathy-theme",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Build tooling for the Samvedna Homeopathy WordPress theme (Tailwind CSS compilation only). Not required at runtime.",
+  "scripts": {
+    "build:css": "tailwindcss -i ./assets/css/src.css -o ./assets/css/app.css --minify",
+    "watch:css": "tailwindcss -i ./assets/css/src.css -o ./assets/css/app.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.0",
+    "tailwindcss": "^4.1.0"
+  }
+}

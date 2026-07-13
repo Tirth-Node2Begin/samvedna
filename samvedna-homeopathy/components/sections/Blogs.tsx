@@ -21,10 +21,6 @@ export default function Blogs() {
           </p>
         </AnimatedReveal>
 
-        {/* Anchor for the "Parent stories" nav link. Parent video stories now
-            live as small thumbnails on each blog card below. */}
-        <div id="testimonials" aria-hidden="true" className="scroll-mt-24 md:scroll-mt-28" />
-
         <AnimatedReveal>
           <BlogsCarousel />
         </AnimatedReveal>

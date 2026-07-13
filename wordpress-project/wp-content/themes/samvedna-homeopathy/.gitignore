@@ -1,0 +1,6 @@
+# Build tooling — not needed at runtime
+/node_modules/
+package-lock.json
+npm-debug.log*
+
+# Keep the compiled stylesheet (assets/css/app.css) committed.

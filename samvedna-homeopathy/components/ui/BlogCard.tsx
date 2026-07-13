@@ -2,21 +2,17 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
-import { ArrowUpRight, Clock, Play } from "lucide-react";
+import { ArrowUpRight, Clock } from "lucide-react";
 import { useRef } from "react";
-import type { BlogPost, VideoTestimonial } from "@/types";
+import type { BlogPost } from "@/types";
 import { blurDataUrl } from "@/lib/utils";
 import useReducedMotion from "@/hooks/useReducedMotion";
 
 type BlogCardProps = {
   post: BlogPost;
-  /** Optional parent video story shown as a small thumbnail on the image. */
-  video?: VideoTestimonial;
-  /** Called with the video when its thumbnail is clicked. */
-  onPlayVideo?: (video: VideoTestimonial) => void;
 };
 
-export default function BlogCard({ post, video, onPlayVideo }: BlogCardProps) {
+export default function BlogCard({ post }: BlogCardProps) {
   const prefersReducedMotion = useReducedMotion();
   const cardRef = useRef<HTMLElement>(null);
 
@@ -57,42 +53,6 @@ export default function BlogCard({ post, video, onPlayVideo }: BlogCardProps) {
         <span className="pointer-events-none absolute left-3 top-3 z-10 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-primary shadow-sm backdrop-blur">
           {post.category}
         </span>
-
-        {video ? (
-          <button
-            type="button"
-            onClick={(event) => {
-              event.preventDefault();
-              event.stopPropagation();
-              onPlayVideo?.(video);
-            }}
-            aria-label={`Play parent video story: ${video.name}, ${video.condition}`}
-            suppressHydrationWarning
-            className="group/video absolute right-2.5 top-2.5 z-20 w-[42%] max-w-[170px] overflow-hidden rounded-xl border-2 border-white/85 shadow-lg ring-1 ring-black/5 transition duration-300 hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-          >
-            <span className="relative block aspect-video bg-slate-900">
-              <Image
-                src={video.poster}
-                alt={video.alt}
-                fill
-                sizes="170px"
-                className="object-cover"
-                placeholder="blur"
-                blurDataURL={blurDataUrl}
-                loading="lazy"
-              />
-              <span className="absolute inset-0 bg-slate-900/35 transition group-hover/video:bg-slate-900/15" />
-              <span className="absolute left-1/2 top-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-primary shadow transition group-hover/video:scale-110 group-hover/video:bg-primary group-hover/video:text-white">
-                <Play className="ml-0.5 h-4 w-4 fill-current" aria-hidden="true" />
-              </span>
-              {video.duration ? (
-                <span className="absolute bottom-1 right-1 rounded bg-slate-900/75 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white">
-                  {video.duration}
-                </span>
-              ) : null}
-            </span>
-          </button>
-        ) : null}
       </div>
 
       <div className="flex flex-1 flex-col p-6">

@@ -1,0 +1,21 @@
+/*
+Theme Name: Samvedna Homeopathy
+Theme URI: https://samvednahomeopathy.com
+Author: Samvedna Homeopathy
+Author URI: https://samvednahomeopathy.com
+Description: Pixel-perfect WordPress theme for Samvedna Homeopathy — Autism & ADHD specialist clinic. Converted 1:1 from the original Next.js project with full animation parity (GSAP + Lenis), a native consultation form, custom post types, and ACF-driven content. Requires PHP 8.0+.
+Version: 1.0.0
+Requires at least: 6.2
+Tested up to: 6.7
+Requires PHP: 8.0
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: samvedna
+Tags: medical, healthcare, one-page, custom-colors, custom-menu, featured-images, full-width-template, translation-ready
+*/
+
+/*
+  All visual styling is compiled by Tailwind into assets/css/app.css and
+  enqueued from inc/enqueue.php. This file only carries the required theme
+  header above. Do not add styles here.
+*/

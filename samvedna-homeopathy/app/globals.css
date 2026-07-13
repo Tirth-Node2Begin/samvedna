@@ -72,3 +72,31 @@ textarea {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Parent-stories video marquee (mirrors the WordPress build). The card set is
+   rendered twice inside .marquee-track and the track slides by -50%, so the
+   loop is seamless. Pauses on hover / keyboard focus. */
+@keyframes sam-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  animation: sam-marquee var(--marquee-duration, 40s) linear infinite;
+}
+
+.marquee-viewport:hover .marquee-track,
+.marquee-track:focus-within {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none !important;
+    transform: none !important;
+  }
+}
