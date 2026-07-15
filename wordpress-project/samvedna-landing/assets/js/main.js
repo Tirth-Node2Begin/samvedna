@@ -134,7 +134,29 @@
 		var titleEl = $('[data-avatar-title]', avatar);
 		var frameId = 0;
 
+		// Remember the avatar's original DOM home so we can restore it when returning to desktop.
+		var homeParent = avatar.parentNode;
+		var homeNext = avatar.nextSibling;
+
+		// Apply the badge/label/glow styling for a given transition progress (0 = hero, 1 = doctor section).
+		function applyState(progress) {
+			if (glow) { glow.style.opacity = (clamp((progress - 0.35) / 0.65) * 0.85).toString(); }
+			if (badge) {
+				badge.style.opacity = clamp(1 - progress * 2.4).toString();
+				badge.style.transform = 'scale(' + lerp(1, 0.85, progress) + ')';
+			}
+			if (label) {
+				label.style.bottom = lerp(-16, -24, progress) + 'px';
+				label.style.borderRadius = lerp(999, 16, progress) + 'px';
+				label.style.padding = lerp(8, 16, progress) + 'px ' + lerp(20, 32, progress) + 'px';
+			}
+			if (nameEl) { nameEl.style.fontSize = lerp(14, 20, progress) + 'px'; }
+			if (titleEl) { titleEl.style.fontSize = lerp(10, 12, progress) + 'px'; }
+		}
+
+		/* ── Desktop: the avatar floats (fixed) from the hero to the doctor section, scroll-linked. ── */
 		function read() {
+			frameId = 0;
 			var scrollY = window.scrollY, scrollX = window.scrollX, vh = window.innerHeight;
 			var oR = origin.getBoundingClientRect();
 			var tR = target.getBoundingClientRect();
@@ -156,29 +178,59 @@
 			avatar.style.width = lerp(oDoc.width, tDoc.width, progress) + 'px';
 			avatar.style.height = lerp(oDoc.height, tDoc.height, progress) + 'px';
 
-			if (glow) { glow.style.opacity = (clamp((progress - 0.35) / 0.65) * 0.85).toString(); }
-			if (badge) {
-				badge.style.opacity = clamp(1 - progress * 2.4).toString();
-				badge.style.transform = 'scale(' + lerp(1, 0.85, progress) + ')';
-			}
-			if (label) {
-				label.style.bottom = lerp(-16, -24, progress) + 'px';
-				label.style.borderRadius = lerp(999, 16, progress) + 'px';
-				label.style.padding = lerp(8, 16, progress) + 'px ' + lerp(20, 32, progress) + 'px';
-			}
-			if (nameEl) { nameEl.style.fontSize = lerp(14, 20, progress) + 'px'; }
-			if (titleEl) { titleEl.style.fontSize = lerp(10, 12, progress) + 'px'; }
+			applyState(progress);
 		}
 
-		function schedule() { window.cancelAnimationFrame(frameId); frameId = window.requestAnimationFrame(read); }
+		function schedule() { if (!frameId) { frameId = window.requestAnimationFrame(read); } }
+
+		var mq = window.matchMedia('(min-width: 1024px)');
+		var mode = '';        // 'desktop' | 'mobile'
+		var scrollBound = false;
+
+		function enableDesktop() {
+			if (mode === 'desktop') { return; }
+			mode = 'desktop';
+			// Restore the avatar to its original spot + fixed positioning.
+			if (avatar.parentNode !== homeParent) { homeParent.insertBefore(avatar, homeNext); }
+			avatar.style.position = 'fixed';
+			avatar.style.right = '';
+			avatar.style.bottom = '';
+			avatar.style.zIndex = '';
+			if (!scrollBound) { window.addEventListener('scroll', schedule, { passive: true }); scrollBound = true; }
+			schedule();
+		}
+
+		function enableMobile() {
+			if (mode === 'mobile') { return; }
+			mode = 'mobile';
+			// No scroll-linked motion on phones (it stutters against the address-bar resize) —
+			// park the avatar statically inside the doctor intro section instead.
+			if (scrollBound) { window.removeEventListener('scroll', schedule); scrollBound = false; }
+			window.cancelAnimationFrame(frameId); frameId = 0;
+			target.appendChild(avatar);
+			avatar.style.display = 'block';
+			avatar.style.position = 'absolute';
+			avatar.style.left = '0';
+			avatar.style.top = '0';
+			avatar.style.right = 'auto';
+			avatar.style.bottom = 'auto';
+			avatar.style.width = '100%';
+			avatar.style.height = '100%';
+			avatar.style.zIndex = '1';
+			applyState(1);
+		}
+
+		function apply() { if (mq.matches) { enableDesktop(); } else { enableMobile(); } }
 
 		if (window.ResizeObserver) {
-			var ro = new ResizeObserver(schedule);
+			var ro = new ResizeObserver(function () { if (mode === 'desktop') { schedule(); } });
 			ro.observe(origin); ro.observe(target); ro.observe(section);
 		}
-		schedule();
-		window.addEventListener('scroll', schedule, { passive: true });
-		window.addEventListener('resize', schedule);
+		if (mq.addEventListener) { mq.addEventListener('change', apply); }
+		else if (mq.addListener) { mq.addListener(apply); }
+		window.addEventListener('resize', function () { if (mode === 'desktop') { schedule(); } });
+
+		apply();
 	}
 
 	/* ───────────────────────── Navbar ───────────────────────── */

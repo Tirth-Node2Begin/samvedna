@@ -13,8 +13,22 @@ const nextConfig: NextConfig = {
     deviceSizes: [640, 768, 1024, 1280, 1440, 1920],
     imageSizes: [96, 128, 256, 384]
   },
+  async redirects() {
+    return [
+      {
+        source: "/samvedna",
+        destination: "/admin/login",
+        permanent: false,
+      },
+      {
+        source: "/samvedna/:path*",
+        destination: "/admin/login",
+        permanent: false,
+      },
+    ];
+  },
   async rewrites() {
-    const phpUrl = process.env.PHP_ADMIN_URL || "http://localhost:8080";
+    const phpUrl = process.env.PHP_ADMIN_URL || "http://localhost:8000";
     return [
       {
         source: "/admin",
@@ -23,6 +37,16 @@ const nextConfig: NextConfig = {
       {
         source: "/admin/:path*",
         destination: `${phpUrl}/admin/:path*`,
+      },
+      // Public read-only JSON API served by the Core PHP backend.
+      {
+        source: "/php-api/:path*",
+        destination: `${phpUrl}/api/:path*`,
+      },
+      // Media uploaded through the admin panel (stored under core-php/uploads).
+      {
+        source: "/uploads/:path*",
+        destination: `${phpUrl}/uploads/:path*`,
       }
     ];
   }

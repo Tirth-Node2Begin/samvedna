@@ -42,7 +42,7 @@ $bg_img   = samvedna_image_url( 'hero.webp' );
 				</div>
 
 				<!-- Left glass card -->
-				<div class="order-2 relative z-20 w-[90%] max-w-[400px] sm:order-1 lg:absolute lg:left-4 lg:top-4 lg:w-[280px]">
+				<div class="order-3 relative z-20 w-[90%] max-w-[400px] lg:absolute lg:left-4 lg:top-4 lg:w-[280px]">
 					<div class="relative rounded-2xl border border-white/20 bg-white/10 p-4 shadow-[0_8px_32px_rgba(0,0,0,0.18)] backdrop-blur-xl flex flex-col justify-start py-6 px-5" data-reveal="fadeUp" data-reveal-delay="0.1">
 						<div class="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 via-transparent to-transparent"></div>
 						<h3 class="mb-3 text-sm font-bold tracking-widest text-cyan-300 uppercase"><?php echo esc_html( samvedna_option( 'hero_card1_title', 'What is Samvedna?' ) ); ?></h3>
@@ -51,7 +51,7 @@ $bg_img   = samvedna_image_url( 'hero.webp' );
 				</div>
 
 				<!-- Right glass card -->
-				<div class="order-3 relative z-20 w-[90%] max-w-[400px] sm:order-2 lg:absolute lg:right-4 lg:top-4 lg:w-[260px]">
+				<div class="order-4 relative z-20 w-[90%] max-w-[400px] lg:absolute lg:right-4 lg:top-4 lg:w-[260px]">
 					<div class="relative rounded-2xl border border-white/20 bg-white/10 p-4 shadow-[0_8px_32px_rgba(0,0,0,0.18)] backdrop-blur-xl flex min-h-[140px] flex-col justify-center" data-reveal="fadeUp" data-reveal-delay="0.2">
 						<div class="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 via-transparent to-transparent"></div>
 						<h3 class="mb-3 text-sm font-bold tracking-widest text-emerald-300 uppercase"><?php echo esc_html( samvedna_option( 'hero_card2_title', 'Our Promise' ) ); ?></h3>
@@ -59,13 +59,13 @@ $bg_img   = samvedna_image_url( 'hero.webp' );
 					</div>
 				</div>
 
-				<!-- Doctor avatar origin anchor (the floating doctor image is positioned here at scroll top) -->
-				<div class="order-4 relative lg:absolute lg:bottom-16 lg:right-0 z-30 flex flex-col items-center w-[210px] min-h-[300px] mt-8 lg:mt-0">
+				<!-- Doctor avatar origin anchor (the floating doctor image is positioned here at scroll top). Hidden on mobile — the avatar shows statically inside the doctor intro section there. -->
+				<div class="order-2 relative lg:absolute lg:bottom-16 lg:right-0 z-30 hidden lg:flex flex-col items-center w-[210px] min-h-[300px] lg:mt-0">
 					<div data-doctor-avatar-origin class="relative h-[280px] w-[210px]" aria-hidden="true"></div>
 				</div>
 
 				<!-- Center swan -->
-				<div class="order-1 relative z-10 mx-auto flex h-[350px] w-full max-w-[600px] items-center justify-center sm:order-3 lg:h-[500px]" data-hero-swan>
+				<div class="order-1 relative z-10 mx-auto flex h-[350px] w-full max-w-[600px] items-center justify-center lg:h-[500px]" data-hero-swan>
 					<div class="absolute left-1/2 top-1/2 h-72 w-[350px] -translate-x-1/2 -translate-y-1/2 rounded-full" style="background:radial-gradient(ellipse, rgba(0,196,196,0.18) 0%, transparent 70%);filter:blur(40px)"></div>
 					<div class="anim-swan relative">
 						<img src="<?php echo esc_url( $swan_img ); ?>" alt="<?php esc_attr_e( 'Samvedna Homeopathy — Swan symbol of healing', 'samvedna' ); ?>" width="480" height="520" fetchpriority="high" decoding="async" class="relative z-10 drop-shadow-[0_40px_80px_rgba(0,196,196,0.4)]" style="filter:drop-shadow(0 0 60px rgba(0,196,196,0.25))" />

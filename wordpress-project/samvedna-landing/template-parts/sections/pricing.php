@@ -17,15 +17,6 @@ $plans = array_values( samvedna_get_plans() );
 			<p class="mt-6 text-balance text-base leading-8 text-muted md:text-lg"><?php esc_html_e( 'Every child progresses differently — but the care they receive should always be predictable, structured, and led by a trained medical team.', 'samvedna' ); ?></p>
 		</div>
 
-		<?php // Currency toggle — switches every price below between INR and USD. ?>
-		<div class="mt-8 flex items-center justify-center gap-3" data-reveal="fadeUp">
-			<span class="text-base font-semibold text-text transition-colors" data-price-when="inr"><?php esc_html_e( 'INR', 'samvedna' ); ?></span>
-			<button type="button" role="switch" aria-checked="false" data-price-switch aria-label="<?php esc_attr_e( 'Switch prices between INR and USD', 'samvedna' ); ?>" class="relative inline-flex h-7 w-14 shrink-0 cursor-pointer items-center rounded-full border border-primary/30 bg-white shadow-inner transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
-				<span class="pointer-events-none absolute left-1 h-5 w-5 rounded-full bg-primary shadow transition-transform duration-300" data-price-knob></span>
-			</button>
-			<span class="text-base font-semibold text-muted transition-colors" data-price-when="usd"><?php esc_html_e( 'USD', 'samvedna' ); ?></span>
-		</div>
-
 		<div class="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3 lg:gap-8 items-stretch">
 			<?php foreach ( $plans as $index => $plan ) : ?>
 				<?php $popular = ! empty( $plan['popular'] ); ?>
@@ -41,12 +32,16 @@ $plans = array_values( samvedna_get_plans() );
 						</div>
 
 						<?php
-						$svl_usd      = svl_inr_to_usd( $plan['price'] );
-						$svl_digits   = preg_replace( '/[^0-9]/', '', (string) $plan['price'] );
-						$svl_usd_disp = '' !== $svl_usd ? '$' . $svl_usd : $plan['price'];
+						// Fixed USD price per plan; fall back to a converted amount only if a plan omits it.
+						if ( ! empty( $plan['price_usd'] ) ) {
+							$svl_usd_disp = $plan['price_usd'];
+						} else {
+							$svl_conv     = svl_inr_to_usd( $plan['price'] );
+							$svl_usd_disp = '' !== $svl_conv ? '$' . $svl_conv : $plan['price'];
+						}
 						?>
 						<div class="mb-6 flex items-baseline text-text">
-							<span class="text-4xl font-bold tracking-tight" data-price-amount data-inr="<?php echo esc_attr( $plan['price'] ); ?>" data-usd="<?php echo esc_attr( $svl_usd_disp ); ?>" data-usd-digits="<?php echo esc_attr( $svl_digits ); ?>"><?php echo esc_html( $plan['price'] ); ?></span>
+							<span class="text-4xl font-bold tracking-tight" data-price-amount data-inr="<?php echo esc_attr( $plan['price'] ); ?>" data-usd="<?php echo esc_attr( $svl_usd_disp ); ?>"><?php echo esc_html( $plan['price'] ); ?></span>
 							<span class="ml-1 text-sm font-medium text-muted">/ <?php echo esc_html( $plan['duration'] ); ?></span>
 						</div>
 
@@ -75,46 +70,59 @@ $plans = array_values( samvedna_get_plans() );
 		</div>
 	</div>
 
-	<?php // INR/USD toggle + refine the USD amounts to the live rate (graceful on any failure). ?>
+	<?php // Fully automatic currency: India -> INR, everywhere else -> USD. Uses the browser location permission when granted, with time-zone + IP fallbacks (no toggle). ?>
 	<script>
 	(function () {
 		var section = document.getElementById('pricing');
 		if ( ! section ) { return; }
-		var sw       = section.querySelector('[data-price-switch]');
-		var knob     = sw && sw.querySelector('[data-price-knob]');
-		var amounts  = section.querySelectorAll('[data-price-amount]');
-		var inrLabel = section.querySelector('[data-price-when="inr"]');
-		var usdLabel = section.querySelector('[data-price-when="usd"]');
-		var usd      = false;
+		var amounts = section.querySelectorAll('[data-price-amount]');
+		if ( ! amounts.length ) { return; }
 
-		function render() {
+		// A more authoritative source wins: geolocation (3) > IP (2) > time zone (1).
+		var applied = 0;
+		function setCurrency( showUsd, priority ) {
+			if ( priority < applied ) { return; }
+			applied = priority;
 			amounts.forEach( function ( el ) {
-				var v = el.getAttribute( usd ? 'data-usd' : 'data-inr' );
+				var v = el.getAttribute( showUsd ? 'data-usd' : 'data-inr' );
 				if ( v ) { el.textContent = v; }
 			} );
-			if ( knob ) { knob.style.transform = usd ? 'translateX(28px)' : 'translateX(0)'; }
-			if ( sw ) { sw.setAttribute( 'aria-checked', usd ? 'true' : 'false' ); }
-			if ( inrLabel ) { inrLabel.classList.toggle( 'text-text', ! usd ); inrLabel.classList.toggle( 'text-muted', usd ); }
-			if ( usdLabel ) { usdLabel.classList.toggle( 'text-text', usd ); usdLabel.classList.toggle( 'text-muted', ! usd ); }
 		}
 
-		if ( sw ) { sw.addEventListener( 'click', function () { usd = ! usd; render(); } ); }
-		render();
-
+		// 1) Instant time-zone guess so there is no price flash.
 		try {
-			fetch( 'https://open.er-api.com/v6/latest/USD', { cache: 'no-store' } )
+			var tz = ( window.Intl && Intl.DateTimeFormat().resolvedOptions().timeZone ) || '';
+			setCurrency( ! /Asia\/(Kolkata|Calcutta)/i.test( tz ), 1 );
+		} catch ( e ) {}
+
+		// 2) IP-based country (no permission required).
+		try {
+			fetch( 'https://api.country.is/', { cache: 'no-store' } )
 				.then( function ( r ) { return r.json(); } )
 				.then( function ( d ) {
-					if ( ! d || ! d.rates || ! d.rates.INR ) { return; }
-					var usdPerInr = 1 / d.rates.INR;
-					amounts.forEach( function ( el ) {
-						var inr = parseFloat( el.getAttribute('data-usd-digits') );
-						if ( ! inr ) { return; }
-						el.setAttribute( 'data-usd', '$' + Math.round( inr * usdPerInr ).toLocaleString('en-US') );
-					} );
-					render();
+					if ( d && d.country ) { setCurrency( String( d.country ).toUpperCase() !== 'IN', 2 ); }
 				} )
 				.catch( function () {} );
+		} catch ( e ) {}
+
+		// 3) Precise device location — asks the visitor for permission, then reverse-geocodes to a country code. Most authoritative; silently ignored if denied/unavailable.
+		try {
+			if ( navigator.geolocation ) {
+				navigator.geolocation.getCurrentPosition(
+					function ( pos ) {
+						var lat = pos.coords.latitude, lon = pos.coords.longitude;
+						fetch( 'https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=' + lat + '&longitude=' + lon + '&localityLanguage=en' )
+							.then( function ( r ) { return r.json(); } )
+							.then( function ( d ) {
+								var cc = d && ( d.countryCode || ( d.location && d.location.isoAlpha2 ) );
+								if ( cc ) { setCurrency( String( cc ).toUpperCase() !== 'IN', 3 ); }
+							} )
+							.catch( function () {} );
+					},
+					function () {},
+					{ enableHighAccuracy: false, timeout: 8000, maximumAge: 600000 }
+				);
+			}
 		} catch ( e ) {}
 	})();
 	</script>

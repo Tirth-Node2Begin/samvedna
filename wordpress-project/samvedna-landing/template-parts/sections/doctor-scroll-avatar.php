@@ -17,7 +17,7 @@ $doctor_img = samvedna_image_url( 'dr-krunal-kosada-removebg-preview.png' );
 	<div class="relative h-full w-full">
 		<div class="absolute inset-0 -z-10 rounded-full bg-cyan-100 blur-[80px]" data-avatar-glow style="opacity:0"></div>
 
-		<div class="absolute -right-10 -top-2 z-10 flex items-center gap-2 rounded-xl border border-white/15 bg-white/10 px-3 py-2 shadow-lg backdrop-blur-xl" data-avatar-badge>
+		<div class="absolute right-1 -top-2 z-10 flex items-center gap-2 rounded-xl border border-white/15 bg-white/10 px-3 py-2 shadow-lg backdrop-blur-xl sm:-right-10" data-avatar-badge>
 			<div class="flex h-6 w-6 items-center justify-center rounded-lg bg-amber-400/20">
 				<?php echo samvedna_icon( 'award', 'h-3 w-3 text-amber-400' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>

@@ -1,0 +1,6 @@
+# Uploaded media (keep the folder, ignore its contents)
+uploads/*
+!uploads/.gitkeep
+
+# Machine-specific config overrides
+config/config.local.php

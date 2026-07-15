@@ -3,6 +3,7 @@ import Hero from "@/components/sections/Hero";
 import DoctorIntro from "@/components/sections/DoctorIntro";
 import DoctorScrollAvatar from "@/components/sections/DoctorScrollAvatar";
 import TrustBar from "@/components/sections/TrustBar";
+import { getBlogPosts, getTeam, getVideoTestimonials } from "@/lib/content";
 
 const ConditionsTreated = dynamic(() => import("@/components/sections/ConditionsTreated"));
 const DoctorAchievements = dynamic(() => import("@/components/sections/DoctorAchievements"));
@@ -18,7 +19,15 @@ const FAQ = dynamic(() => import("@/components/sections/FAQ"));
 const Footer = dynamic(() => import("@/components/sections/Footer"));
 const FormPopup = dynamic(() => import("@/components/ui/FormPopup"));
 
-export default function Home() {
+export default async function Home() {
+  // Live content from the Core PHP admin (falls back to static seed data when
+  // the PHP server is unavailable).
+  const [posts, members, videos] = await Promise.all([
+    getBlogPosts(),
+    getTeam(),
+    getVideoTestimonials(),
+  ]);
+
   return (
     <>
       <Hero />
@@ -29,10 +38,10 @@ export default function Home() {
       <DoctorAchievements />
       <WhyFamiliesTrust />
       <TreatmentJourney />
-      <MedicalTeam />
+      <MedicalTeam members={members} />
       <InternationalReach />
-      <VideoTestimonials />
-      <Blogs />
+      <VideoTestimonials videos={videos} />
+      <Blogs posts={posts} />
       <Pricing />
       <FinalCTA />
       <FAQ />

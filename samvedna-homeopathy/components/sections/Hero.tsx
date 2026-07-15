@@ -156,7 +156,7 @@ export default function Hero() {
             </motion.div>
 
             {/* ─── LEFT TOP GLASS CARD ("What is Samvedna?") ─── */}
-            <div className="order-2 relative z-20 w-[90%] max-w-[400px] sm:order-1 lg:absolute lg:left-4 lg:top-4 lg:w-[280px]">
+            <div className="order-3 relative z-20 w-[90%] max-w-[400px] lg:absolute lg:left-4 lg:top-4 lg:w-[280px]">
               <GlassCard delay={0.1} className="flex flex-col justify-start py-6 px-5">
                 <h3 className="mb-3 text-sm font-bold tracking-widest text-cyan-300 uppercase">What is Samvedna?</h3>
                 <p className="text-[14px] leading-relaxed text-white/80">
@@ -166,7 +166,7 @@ export default function Hero() {
             </div>
 
             {/* ─── RIGHT TOP GLASS CARD ("Branding / Promise") ─── */}
-            <div className="order-3 relative z-20 w-[90%] max-w-[400px] sm:order-2 lg:absolute lg:right-4 lg:top-4 lg:w-[260px]">
+            <div className="order-4 relative z-20 w-[90%] max-w-[400px] lg:absolute lg:right-4 lg:top-4 lg:w-[260px]">
               <GlassCard delay={0.2} className="flex min-h-[140px] flex-col justify-center">
                 <h3 className="mb-3 text-sm font-bold tracking-widest text-emerald-300 uppercase">Our Promise</h3>
                 <p className="text-[13px] leading-relaxed text-white/80">
@@ -175,15 +175,15 @@ export default function Hero() {
               </GlassCard>
             </div>
 
-            {/* ─── RIGHT BOTTOM (Doctor Image & Experience) ─── */}
-            <div className="order-4 relative lg:absolute lg:bottom-16 lg:right-0 z-30 flex flex-col items-center w-[210px] min-h-[300px] mt-8 lg:mt-0">
+            {/* ─── RIGHT BOTTOM (Doctor Image & Experience) — hidden on mobile; the avatar shows statically in the doctor intro section there ─── */}
+            <div className="order-2 relative lg:absolute lg:bottom-16 lg:right-0 z-30 hidden lg:flex flex-col items-center w-[210px] min-h-[300px] lg:mt-0">
               <div data-doctor-avatar-origin className="relative h-[280px] w-[210px]" aria-hidden="true" />
             </div>
 
             {/* ─── CENTER SWAN / CHARACTER ─── */}
             <motion.div
               style={prefersReducedMotion ? {} : { x: swanXS, y: swanYS }}
-              className="order-1 relative z-10 mx-auto flex h-[350px] w-full max-w-[600px] items-center justify-center sm:order-3 lg:h-[500px]"
+              className="order-1 relative z-10 mx-auto flex h-[350px] w-full max-w-[600px] items-center justify-center lg:h-[500px]"
             >
               {/* glow beneath swan */}
               <div

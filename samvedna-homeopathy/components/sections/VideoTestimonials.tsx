@@ -14,18 +14,22 @@ import { blurDataUrl } from "@/lib/utils";
 // the WordPress build (`template-parts/sections/video-testimonials.php`):
 // a continuous right-to-left marquee of video cards, each opening the shared
 // video modal. Slower for fewer cards, capped so many cards still glide.
-const MARQUEE_DURATION = Math.max(24, videoTestimonials.length * 7);
-
-export default function VideoTestimonials() {
+export default function VideoTestimonials({
+  videos = videoTestimonials,
+}: {
+  videos?: VideoTestimonial[];
+}) {
   const [activeVideo, setActiveVideo] = useState<VideoTestimonial | null>(null);
 
-  if (videoTestimonials.length === 0) {
+  if (videos.length === 0) {
     return null;
   }
 
+  const marqueeDuration = Math.max(24, videos.length * 7);
+
   // Render the set twice: the first is interactive, the second is a
   // presentational clone (hidden from AT / keyboard) for a seamless loop.
-  const loop = [...videoTestimonials, ...videoTestimonials];
+  const loop = [...videos, ...videos];
 
   return (
     <section
@@ -50,14 +54,19 @@ export default function VideoTestimonials() {
       <AnimatedReveal className="marquee-viewport mt-12">
         <div
           className="marquee-track flex w-max will-change-transform"
-          style={{ "--marquee-duration": `${MARQUEE_DURATION}s` } as CSSProperties}
+          style={{ "--marquee-duration": `${marqueeDuration}s` } as CSSProperties}
         >
           {loop.map((video, index) => {
-            const clone = index >= videoTestimonials.length;
+            const clone = index >= videos.length;
             return (
               <button
                 key={`${video.condition}-${index}`}
                 type="button"
+                // Some browser extensions (form fillers / "verify" tools) inject
+                // an `fdprocessedid` attribute onto buttons before React hydrates,
+                // which trips a hydration attribute-mismatch warning. This element
+                // is deterministic, so suppress that third-party-only diff.
+                suppressHydrationWarning
                 onClick={() => setActiveVideo(video)}
                 aria-hidden={clone || undefined}
                 tabIndex={clone ? -1 : undefined}

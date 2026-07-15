@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:php": "php -S localhost:8000 -t core-php core-php/router.php",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",

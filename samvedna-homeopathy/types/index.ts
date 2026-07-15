@@ -38,9 +38,13 @@ export type TeamMember = {
 };
 
 export type BlogPost = {
+  /** Present when the post comes from the admin/API (absent for static seed data). */
+  id?: number;
   slug: string;
   title: string;
   excerpt: string;
+  /** Full article body (HTML or plain text) — only returned by the API. */
+  content?: string;
   image: string;
   alt: string;
   category: string;

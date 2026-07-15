@@ -8,7 +8,7 @@ const plans = [
     name: "Starter (Trial)",
     tagline: "Safe start to experience structured Samvedna care.",
     duration: "2 months",
-    price: "₹14,999",
+    price: "₹599",
     features: [
       "Medicines for 2 months",
       "1 Bi-Monthly Review (60-day review)",
@@ -22,7 +22,7 @@ const plans = [
     name: "Standard",
     tagline: "Balanced, evidence-led care with two-doctor oversight.",
     duration: "6 months",
-    price: "₹39,999",
+    price: "₹1,499",
     features: [
       "Medicines for 6 months",
       "Every 2 months (3 sessions)",
@@ -39,7 +39,7 @@ const plans = [
     name: "Premium",
     tagline: "High-intensity supervision with founder review.",
     duration: "6 months",
-    price: "₹54,999",
+    price: "₹1,999",
     features: [
       "Medicines for 6 months",
       "Monthly follow-ups",

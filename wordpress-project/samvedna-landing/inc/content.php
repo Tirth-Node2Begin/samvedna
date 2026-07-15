@@ -157,13 +157,14 @@ function samvedna_get_plans() {
 	$out = array();
 	foreach ( $posts as $post ) {
 		$out[] = array(
-			'name'     => get_the_title( $post ),
-			'tagline'  => samvedna_get_field( 'tagline', '', $post->ID ),
-			'duration' => samvedna_get_field( 'duration', '', $post->ID ),
-			'price'    => samvedna_get_field( 'price', '', $post->ID ),
-			'features' => samvedna_to_list( samvedna_get_field( 'features', array(), $post->ID ) ),
-			'popular'  => (bool) samvedna_get_field( 'popular', false, $post->ID ),
-			'cta'      => samvedna_get_field( 'cta', __( 'Get started', 'samvedna' ), $post->ID ),
+			'name'      => get_the_title( $post ),
+			'tagline'   => samvedna_get_field( 'tagline', '', $post->ID ),
+			'duration'  => samvedna_get_field( 'duration', '', $post->ID ),
+			'price'     => samvedna_get_field( 'price', '', $post->ID ),
+			'price_usd' => samvedna_get_field( 'price_usd', '', $post->ID ),
+			'features'  => samvedna_to_list( samvedna_get_field( 'features', array(), $post->ID ) ),
+			'popular'   => (bool) samvedna_get_field( 'popular', false, $post->ID ),
+			'cta'       => samvedna_get_field( 'cta', __( 'Get started', 'samvedna' ), $post->ID ),
 		);
 	}
 	return $out;

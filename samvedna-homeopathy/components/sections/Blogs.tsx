@@ -1,8 +1,10 @@
 import AnimatedReveal from "@/components/ui/AnimatedReveal";
 import AnimatedText from "@/components/ui/AnimatedText";
 import BlogsCarousel from "@/components/ui/BlogsCarousel";
+import { blogPosts } from "@/constants/blogs";
+import type { BlogPost } from "@/types";
 
-export default function Blogs() {
+export default function Blogs({ posts = blogPosts }: { posts?: BlogPost[] }) {
   return (
     <section id="blogs" className="scroll-mt-24 bg-bg-soft py-16 md:scroll-mt-28 md:py-20 lg:py-[120px]">
       <div className="mx-auto max-w-content px-5 md:px-8">
@@ -22,7 +24,7 @@ export default function Blogs() {
         </AnimatedReveal>
 
         <AnimatedReveal>
-          <BlogsCarousel />
+          <BlogsCarousel posts={posts} />
         </AnimatedReveal>
       </div>
     </section>

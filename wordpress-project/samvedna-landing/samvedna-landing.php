@@ -3,7 +3,7 @@
  * Plugin Name:       Samvedna Landing
  * Plugin URI:        https://autismhomeohelp.com/
  * Description:       Adds the Samvedna Homeopathy landing page (custom header, all sections, animations, footer, and the consultation form) as a single selectable page template. It never changes the active theme and its styles/scripts load ONLY on the assigned page, so no other page on the site is affected.
- * Version:           1.0.11
+ * Version:           1.0.16
  * Requires at least: 6.2
  * Requires PHP:      8.0
  * Author:            Samvedna
@@ -15,7 +15,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'SVL_VERSION', '1.0.11' );
+define( 'SVL_VERSION', '1.0.16' );
 define( 'SVL_DIR', plugin_dir_path( __FILE__ ) );   // trailing slash
 define( 'SVL_URL', plugin_dir_url( __FILE__ ) );    // trailing slash
 define( 'SVL_TEMPLATE', 'samvedna-landing' );       // page-template key stored on the page
