@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import Button from "@/components/ui/Button";
 
 export default function NotFound() {
@@ -10,7 +11,7 @@ export default function NotFound() {
 
       <div className="relative z-10 mx-auto max-w-xl text-center">
         <div className="mb-8 flex justify-center">
-          <a href="/" className="inline-block transition-transform hover:scale-105">
+          <Link href="/" className="inline-block transition-transform hover:scale-105">
             <Image
               src="/images/samvedna-logo.webp"
               alt="Samvedna Homeopathy"
@@ -19,7 +20,7 @@ export default function NotFound() {
               priority
               className="h-auto w-40 drop-shadow-sm"
             />
-          </a>
+          </Link>
         </div>
 
         <div className="rounded-3xl border border-border/80 bg-white/90 p-8 shadow-[0_20px_50px_rgba(15,23,42,0.06)] backdrop-blur-xl sm:p-12">

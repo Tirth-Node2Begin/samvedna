@@ -4,7 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Clock } from "lucide-react";
 import Footer from "@/components/sections/Footer";
-import { getBlogPost, getBlogPosts } from "@/lib/content";
+import { getBlogPost } from "@/lib/content";
 import { blurDataUrl } from "@/lib/utils";
 
 type BlogDetailPageProps = {
