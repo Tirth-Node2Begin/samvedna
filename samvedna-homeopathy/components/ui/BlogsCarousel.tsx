@@ -3,7 +3,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import BlogCard from "@/components/ui/BlogCard";
-import { blogPosts } from "@/constants/blogs";
 import type { BlogPost } from "@/types";
 import useReducedMotion from "@/hooks/useReducedMotion";
 
@@ -27,11 +26,7 @@ function swapOne(current: number[], posts: BlogPost[]): number[] {
   return updated;
 }
 
-export default function BlogsCarousel({
-  posts = blogPosts,
-}: {
-  posts?: BlogPost[];
-}) {
+export default function BlogsCarousel({ posts }: { posts: BlogPost[] }) {
   // Deterministic first render so the server HTML matches the client's first
   // render (no hydration mismatch). Randomisation only starts after mount,
   // inside the interval below.

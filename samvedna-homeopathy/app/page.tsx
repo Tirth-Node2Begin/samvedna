@@ -3,16 +3,26 @@ import Hero from "@/components/sections/Hero";
 import DoctorIntro from "@/components/sections/DoctorIntro";
 import DoctorScrollAvatar from "@/components/sections/DoctorScrollAvatar";
 import TrustBar from "@/components/sections/TrustBar";
-import { getBlogPosts, getTeam, getVideoTestimonials } from "@/lib/content";
+import { getBlogPosts, getConditions, getTeam, getVideoTestimonials } from "@/lib/content";
 
-const ConditionsTreated = dynamic(() => import("@/components/sections/ConditionsTreated"));
 const DoctorAchievements = dynamic(() => import("@/components/sections/DoctorAchievements"));
 const WhyFamiliesTrust = dynamic(() => import("@/components/sections/WhyFamiliesTrust"));
 const TreatmentJourney = dynamic(() => import("@/components/sections/TreatmentJourney"));
-const MedicalTeam = dynamic(() => import("@/components/sections/MedicalTeam"));
 const InternationalReach = dynamic(() => import("@/components/sections/InternationalReach"));
-const VideoTestimonials = dynamic(() => import("@/components/sections/VideoTestimonials"));
-const Blogs = dynamic(() => import("@/components/sections/Blogs"));
+// Admin-managed sections render the build-time snapshot, then refresh in the
+// browser so newly published content appears without a rebuild.
+const ConditionsTreated = dynamic(() =>
+  import("@/components/sections/LiveSections").then((m) => m.LiveConditionsTreated)
+);
+const MedicalTeam = dynamic(() =>
+  import("@/components/sections/LiveSections").then((m) => m.LiveMedicalTeam)
+);
+const VideoTestimonials = dynamic(() =>
+  import("@/components/sections/LiveSections").then((m) => m.LiveVideoTestimonials)
+);
+const Blogs = dynamic(() =>
+  import("@/components/sections/LiveSections").then((m) => m.LiveBlogs)
+);
 const Pricing = dynamic(() => import("@/components/sections/Pricing"));
 const FinalCTA = dynamic(() => import("@/components/sections/FinalCTA"));
 const FAQ = dynamic(() => import("@/components/sections/FAQ"));
@@ -22,10 +32,11 @@ const FormPopup = dynamic(() => import("@/components/ui/FormPopup"));
 export default async function Home() {
   // Live content from the Core PHP admin (falls back to static seed data when
   // the PHP server is unavailable).
-  const [posts, members, videos] = await Promise.all([
+  const [posts, members, videos, conditions] = await Promise.all([
     getBlogPosts(),
     getTeam(),
     getVideoTestimonials(),
+    getConditions(),
   ]);
 
   return (
@@ -34,14 +45,14 @@ export default async function Home() {
       <DoctorIntro />
       <DoctorScrollAvatar />
       <TrustBar />
-      <ConditionsTreated />
+      <ConditionsTreated initial={conditions} />
       <DoctorAchievements />
+      <VideoTestimonials initial={videos} />
       <WhyFamiliesTrust />
       <TreatmentJourney />
-      <MedicalTeam members={members} />
+      <MedicalTeam initial={members} />
       <InternationalReach />
-      <VideoTestimonials videos={videos} />
-      <Blogs posts={posts} />
+      <Blogs initial={posts} />
       <Pricing />
       <FinalCTA />
       <FAQ />

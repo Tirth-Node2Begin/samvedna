@@ -5,8 +5,13 @@ export type NavItem = {
 };
 
 export type Condition = {
+  /** Present when the condition comes from the admin/API. */
+  id?: number;
   name: string;
   description: string;
+  /** Optional photo. Empty means the card shows its built-in icon instead. */
+  image?: string;
+  alt?: string;
   span: "featured" | "standard" | "compact";
 };
 
@@ -45,6 +50,8 @@ export type BlogPost = {
   excerpt: string;
   /** Full article body (HTML or plain text) — only returned by the API. */
   content?: string;
+  /** Post author, e.g. "Dr. Krunal Kosada" — returned by the API. */
+  author?: string;
   image: string;
   alt: string;
   category: string;

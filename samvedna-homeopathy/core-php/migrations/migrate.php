@@ -9,7 +9,14 @@
  *   1. Create the database if it does not exist.
  *   2. Apply migrations/schema.sql.
  *   3. Seed a default admin (only if none exists).
- *   4. Seed sample blogs / testimonials / doctors (only if the tables are empty).
+ *   4. Seed sample blogs / testimonials / doctors — ONLY with --seed-demo.
+ *
+ * The demo content is opt-in because blogs, doctors and video testimonials are
+ * admin-managed and the website renders those sections only when rows exist.
+ * Seeding them by default would put invented practitioners and invented parent
+ * stories on a live medical site. For local development:
+ *
+ *   php core-php/migrations/migrate.php --seed-demo
  *
  * Safe to run multiple times.
  */
@@ -19,6 +26,8 @@ declare(strict_types=1);
 require_once __DIR__ . '/../config/config.php';
 
 $isCli = (PHP_SAPI === 'cli');
+$seedDemo = ($isCli && in_array('--seed-demo', $argv ?? [], true))
+    || (!$isCli && isset($_GET['seed-demo']));
 $nl = $isCli ? "\n" : "<br>\n";
 function out(string $m): void
 {
@@ -80,9 +89,16 @@ if ($adminCount === 0) {
     out("Admins already present ({$adminCount}) — skipping admin seed.");
 }
 
+// --- 4. Demo content ------------------------------------------------------
+// Opt-in only: an unseeded install shows no blog, team or parent-stories
+// section at all, which is correct until the client enters real content.
+if (!$seedDemo) {
+    out('Skipping demo content (pass --seed-demo to load sample blogs/testimonials/doctors).');
+}
+
 // --- 4a. Seed blogs -------------------------------------------------------
 $blogCount = (int) $pdo->query('SELECT COUNT(*) FROM blogs')->fetchColumn();
-if ($blogCount === 0) {
+if ($seedDemo && $blogCount === 0) {
     $blogs = [
         ['understanding-autism-first-guide', "Understanding Autism Spectrum Disorder: A Parent's First Guide", 'What the early signs mean, how assessment works, and the calm first steps families can take.', '/images/samvedna-auditorium.webp', 'Samvedna Homeopathy consultation space', 'Autism', '2026-05-12', '6 min read'],
         ['homeopathy-and-speech-delay', 'How Homeopathy Supports Children With Speech Delay', 'A look at individualized care that works alongside speech therapy and daily home routines.', '/images/assistant-doctor-cabin.webp', 'Doctor consultation cabin at Samvedna Homeopathy', 'Speech', '2026-04-28', '5 min read'],
@@ -100,13 +116,13 @@ if ($blogCount === 0) {
         $stmt->execute([$b[0], $b[1], $b[2], $content, $b[5], 'Samvedna Team', $b[3], $b[4], $b[7], $b[6]]);
     }
     out('Seeded ' . count($blogs) . ' blog posts.');
-} else {
+} elseif ($seedDemo) {
     out("Blogs already present ({$blogCount}) — skipping.");
 }
 
 // --- 4b. Seed video testimonials -----------------------------------------
 $vtCount = (int) $pdo->query('SELECT COUNT(*) FROM video_testimonials')->fetchColumn();
-if ($vtCount === 0) {
+if ($seedDemo && $vtCount === 0) {
     $items = [
         ['Parent family', 'Autism support', 'Canada', '', '/images/assistant-doctor-cabin.webp', "Parent sharing their child's autism care journey", '2:10'],
         ['Parent family', 'Speech delay support', 'India', '', '/images/samvedna-associate-portrait.webp', 'Parent describing speech delay progress', '1:48'],
@@ -123,13 +139,13 @@ if ($vtCount === 0) {
         $stmt->execute([$v[0], $v[1], $v[2], $v[3], $v[4], $v[5], $v[6], $i]);
     }
     out('Seeded ' . count($items) . ' video testimonials.');
-} else {
+} elseif ($seedDemo) {
     out("Video testimonials already present ({$vtCount}) — skipping.");
 }
 
 // --- 4c. Seed doctors -----------------------------------------------------
 $docCount = (int) $pdo->query('SELECT COUNT(*) FROM doctors')->fetchColumn();
-if ($docCount === 0) {
+if ($seedDemo && $docCount === 0) {
     $j = static fn(array $a): string => json_encode($a, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     $doctors = [
         [
@@ -193,8 +209,37 @@ if ($docCount === 0) {
         $stmt->execute($d);
     }
     out('Seeded ' . count($doctors) . ' doctors.');
-} else {
+} elseif ($seedDemo) {
     out("Doctors already present ({$docCount}) — skipping.");
+}
+
+// --- 4d. Seed conditions --------------------------------------------------
+// Not gated behind --seed-demo: these seven are the real, existing homepage
+// content that used to live in constants/conditions.ts. Without them the
+// "Conditions we support" section would render empty after the move to the DB.
+// Images are left blank on purpose — the card falls back to its built-in icon
+// until the client uploads one from the admin.
+$condCount = (int) $pdo->query('SELECT COUNT(*) FROM conditions')->fetchColumn();
+if ($condCount === 0) {
+    $conditions = [
+        ['Autism Spectrum Disorder Support', 'Individualized support for communication, social interaction, sensory needs, behavior, sleep, and family routines.', 'featured'],
+        ['ADHD Support', 'Care focused on attention, hyperactivity, impulsivity, sleep, emotional regulation, and learning readiness.', 'standard'],
+        ['Learning Disability Support', 'Guidance for children struggling with reading, writing, processing, classroom readiness, and confidence.', 'compact'],
+        ['Speech Delay Support', 'Support for expressive speech, understanding, non-verbal communication, and connection alongside therapies.', 'compact'],
+        ['Developmental Delay Support', 'Structured care for children whose milestones, regulation, and everyday developmental progress need support.', 'standard'],
+        ['Genetic Disorders Support', 'Individualized supportive care for children with genetic and syndrome-related developmental challenges.', 'standard'],
+        ['Neurological Disorders Support', 'Homeopathic support for pediatric neurological and neurodevelopmental concerns with careful monitoring.', 'standard'],
+    ];
+    $stmt = $pdo->prepare(
+        'INSERT INTO conditions (name, description, image, alt, span, sort_order, status, created_at, updated_at)
+         VALUES (?, ?, "", "", ?, ?, "published", NOW(), NOW())'
+    );
+    foreach ($conditions as $i => $c) {
+        $stmt->execute([$c[0], $c[1], $c[2], $i]);
+    }
+    out('Seeded ' . count($conditions) . ' conditions.');
+} else {
+    out("Conditions already present ({$condCount}) — skipping.");
 }
 
 // --- Ensure uploads dir exists -------------------------------------------
@@ -206,4 +251,4 @@ if (!is_dir(UPLOAD_DIR)) {
 out('');
 out('Migration complete. Start the PHP server with:');
 out('  php -S localhost:8080 -t core-php core-php/router.php');
-out('Then open the admin at http://localhost:8080/admin  (or /admin via the Next dev server).');
+out('Then open the admin at http://localhost:8080/samvedna  (or /samvedna via the Next dev server).');

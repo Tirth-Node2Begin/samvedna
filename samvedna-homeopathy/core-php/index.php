@@ -4,5 +4,5 @@
  * Redirects to the admin panel.
  */
 declare(strict_types=1);
-header('Location: /admin/index.php');
+header('Location: /samvedna');
 exit;

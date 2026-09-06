@@ -13,6 +13,12 @@
 # production
 /build
 
+# deploy artifacts (live/app/.env and live/php/config.local.php hold real credentials)
+/live
+/live-app.zip
+/live-php.zip
+/scripts/secrets.ps1
+
 # misc
 .DS_Store
 *.pem

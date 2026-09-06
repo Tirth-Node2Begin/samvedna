@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoaderCircle, Send } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useId, useRef, useState, useTransition } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { conditionList } from "@/constants/conditions";
 import {
@@ -15,7 +15,7 @@ import {
 import {
   submitBooking,
   type BookingActionResult
-} from "@/lib/actions/booking";
+} from "@/lib/api/leads";
 import { getFormRedirect } from "@/lib/config/forms";
 import Button from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
@@ -48,7 +48,10 @@ type ConsultationFormProps = {
 export default function ConsultationForm({ source = "website" }: ConsultationFormProps) {
   const [result, setResult] = useState<BookingActionResult | null>(null);
   const [isRedirecting, setIsRedirecting] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  // Plain state, not useTransition: the submit is now an ordinary fetch to PHP,
+  // and a transition would report "not pending" the moment the callback returns.
+  const [isPending, setIsPending] = useState(false);
+  const [honeypot, setHoneypot] = useState("");
   const router = useRouter();
   const redirectTimer = useRef<number | null>(null);
 
@@ -82,35 +85,32 @@ export default function ConsultationForm({ source = "website" }: ConsultationFor
     }
   });
 
-  const onSubmit = handleSubmit((values: ConsultationInput) => {
-    const formData = new FormData();
-    Object.entries(values).forEach(([key, value]) => {
-      formData.append(key, String(value ?? ""));
-    });
-    formData.append("source", source);
+  const onSubmit = handleSubmit(async (values: ConsultationInput) => {
+    setIsPending(true);
+    try {
+      const response = await submitBooking({ ...values, company: honeypot }, source);
+      setResult(response);
 
-    startTransition(() => {
-      void submitBooking(formData).then((response) => {
-        setResult(response);
-        if (response.status === "success") {
-          reset();
+      if (response.status === "success") {
+        reset();
 
-          // Redirect only after a successful submission, once the success
-          // message has had a moment to display. Behaviour is configurable.
-          const redirect = getFormRedirect();
-          if (redirect.url) {
-            setIsRedirecting(true);
-            redirectTimer.current = window.setTimeout(() => {
-              if (redirect.external) {
-                window.location.href = redirect.url as string;
-              } else {
-                router.push(redirect.url as string);
-              }
-            }, redirect.delayMs);
-          }
+        // Redirect only after a successful submission, once the success
+        // message has had a moment to display. Behaviour is configurable.
+        const redirect = getFormRedirect();
+        if (redirect.url) {
+          setIsRedirecting(true);
+          redirectTimer.current = window.setTimeout(() => {
+            if (redirect.external) {
+              window.location.href = redirect.url as string;
+            } else {
+              router.push(redirect.url as string);
+            }
+          }, redirect.delayMs);
         }
-      });
-    });
+      }
+    } finally {
+      setIsPending(false);
+    }
   });
 
   const disabled = isPending || isRedirecting;
@@ -118,7 +118,7 @@ export default function ConsultationForm({ source = "website" }: ConsultationFor
   return (
     <form
       onSubmit={onSubmit}
-      className="flex w-full flex-col text-left"
+      className="relative flex w-full flex-col text-left"
       noValidate
     >
       <div className="mb-6 flex flex-col gap-2 border-b border-border/60 pb-5 pr-12">
@@ -131,6 +131,21 @@ export default function ConsultationForm({ source = "website" }: ConsultationFor
         <p className="text-sm leading-6 text-muted">
           A team member will review your details and guide you through the next step.
         </p>
+      </div>
+
+      {/* Honeypot: hidden from people, irresistible to bots. leads.php rejects
+          any submission that fills it. Not `type="hidden"` — bots skip those. */}
+      <div aria-hidden="true" className="absolute left-[-9999px] h-0 w-0 overflow-hidden">
+        <label>
+          Company
+          <input
+            name="company"
+            tabIndex={-1}
+            autoComplete="off"
+            value={honeypot}
+            onChange={(event) => setHoneypot(event.target.value)}
+          />
+        </label>
       </div>
 
       <fieldset disabled={disabled} className="grid gap-x-5 gap-y-4 md:grid-cols-2">

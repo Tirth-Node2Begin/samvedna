@@ -1,6 +1,12 @@
 # Uploaded media (keep the folder, ignore its contents)
 uploads/*
 !uploads/.gitkeep
+# ...but the no-PHP-execution guard is source, not upload, and must survive a clone.
+!uploads/.htaccess
 
 # Machine-specific config overrides
 config/config.local.php
+
+# Environment files hold real credentials — only the example is committed.
+.env
+.env.production

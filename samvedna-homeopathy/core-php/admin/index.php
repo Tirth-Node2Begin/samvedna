@@ -5,13 +5,18 @@ require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/models/Blog.php';
 require_once __DIR__ . '/../includes/models/VideoTestimonial.php';
 require_once __DIR__ . '/../includes/models/Doctor.php';
+require_once __DIR__ . '/../includes/models/Condition.php';
+require_once __DIR__ . '/../includes/models/Lead.php';
+require_once __DIR__ . '/../includes/models/Consultation.php';
 
 require_login(0);
 
-$blogCount    = count(Blog::all());
-$vtCount      = count(VideoTestimonial::all());
-$docCount     = count(Doctor::all());
-$inquiryCount = (int) db()->query('SELECT COUNT(*) FROM inquiries')->fetchColumn();
+$blogCount         = count(Blog::all());
+$vtCount           = count(VideoTestimonial::all());
+$docCount          = count(Doctor::all());
+$condCount         = Condition::count();
+$inquiryCount      = Lead::count();
+$consultationCount = Consultation::count();
 
 $recentBlogs = array_slice(Blog::all(), 0, 5);
 $adminName = current_admin()['name'] ?? 'Administrator';
@@ -23,7 +28,9 @@ if (!function_exists('dashboard_stat_icon')) {
             'blogs' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/><path d="M8 7h8"/><path d="M8 11h7"/></svg>',
             'video' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3Z"/></svg>',
             'doctor' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-8 0v2"/><circle cx="12" cy="7" r="4"/><path d="M19 8v6"/><path d="M16 11h6"/></svg>',
+            'conditions' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.5-7 10-7 10Z"/><path d="M9 12h1.5l1-2 1.5 4 1-2H15"/></svg>',
             'inquiry' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4Z"/><path d="M8 9h8"/><path d="M8 13h5"/></svg>',
+            'assessment' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h4"/></svg>',
             'spark' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M12 3 9.8 8.8 4 11l5.8 2.2L12 19l2.2-5.8L20 11l-5.8-2.2Z"/></svg>',
         ];
 
@@ -57,12 +64,28 @@ $dashboardStats = [
         'href' => au('doctors'),
     ],
     [
+        'key' => 'conditions',
+        'icon' => 'conditions',
+        'value' => $condCount,
+        'label' => 'Conditions',
+        'detail' => 'Cards in the "Conditions we support" grid on the homepage.',
+        'href' => au('conditions'),
+    ],
+    [
         'key' => 'inquiry',
         'icon' => 'inquiry',
         'value' => $inquiryCount,
-        'label' => 'Consultation inquiries',
-        'detail' => 'Submitted consultation requests stored in the CMS.',
-        'href' => ADMIN_BASE,
+        'label' => 'Consultation leads',
+        'detail' => 'Contact form and popup submissions from the website.',
+        'href' => au('leads'),
+    ],
+    [
+        'key' => 'assessment',
+        'icon' => 'assessment',
+        'value' => $consultationCount,
+        'label' => 'Care-plan assessments',
+        'detail' => 'Detailed multi-step intakes submitted from the care plans.',
+        'href' => au('consultations'),
     ],
 ];
 
@@ -108,19 +131,21 @@ require __DIR__ . '/partials/header.php';
     <?php if (empty($recentBlogs)): ?>
       <div class="empty">No blog posts yet. <a href="<?= e(au('blogs/new')) ?>">Create the first one</a>.</div>
     <?php else: ?>
+      <div class="table-scroll">
       <table>
-        <thead><tr><th>Title</th><th>Category</th><th>Status</th><th>Published</th></tr></thead>
+        <thead><tr><th>Title</th><th class="col-hide-sm">Category</th><th>Status</th><th class="col-hide-md">Published</th></tr></thead>
         <tbody>
           <?php foreach ($recentBlogs as $b): ?>
             <tr>
               <td><a href="<?= e(au('blogs/edit/' . (int) $b['id'])) ?>"><?= e($b['title']) ?></a></td>
-              <td><?= e($b['category']) ?></td>
+              <td class="col-hide-sm"><?= e($b['category']) ?></td>
               <td><span class="badge badge-<?= e($b['status']) ?>"><?= e($b['status']) ?></span></td>
-              <td><?= e($b['published_at'] ?? '-') ?></td>
+              <td class="col-hide-md"><?= e($b['published_at'] ?? '-') ?></td>
             </tr>
           <?php endforeach; ?>
         </tbody>
       </table>
+      </div>
     <?php endif; ?>
   </div>
 
@@ -150,8 +175,8 @@ require __DIR__ . '/partials/header.php';
         <h2>Content snapshot</h2>
       </div>
       <div class="snapshot-list">
-        <div class="snapshot-row"><span>Total records</span><strong><?= $blogCount + $vtCount + $docCount ?></strong></div>
-        <div class="snapshot-row"><span>Public sections</span><strong>3</strong></div>
+        <div class="snapshot-row"><span>Total records</span><strong><?= $blogCount + $vtCount + $docCount + $condCount ?></strong></div>
+        <div class="snapshot-row"><span>Public sections</span><strong>4</strong></div>
         <div class="snapshot-row"><span>Last checked</span><strong><?= e(date('d M Y')) ?></strong></div>
       </div>
     </div>

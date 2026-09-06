@@ -1,14 +1,15 @@
 import AnimatedReveal from "@/components/ui/AnimatedReveal";
 import AnimatedText from "@/components/ui/AnimatedText";
 import DoctorsGrid from "@/components/sections/DoctorsGrid";
-import team from "@/constants/team";
 import type { TeamMember } from "@/types";
 
-export default function MedicalTeam({
-  members = team,
-}: {
-  members?: TeamMember[];
-}) {
+export default function MedicalTeam({ members }: { members: TeamMember[] }) {
+  // Admin-managed: no doctor profiles means no team section at all, rather than
+  // a heading above an empty grid.
+  if (members.length === 0) {
+    return null;
+  }
+
   return (
     <section id="doctors" className="scroll-mt-24 bg-white pt-16 md:scroll-mt-28 md:pt-20 lg:pt-[120px] pb-0">
       <div className="mx-auto max-w-content px-5 md:px-8">

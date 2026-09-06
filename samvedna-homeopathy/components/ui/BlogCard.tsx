@@ -5,7 +5,7 @@ import Image from "next/image";
 import { ArrowUpRight, Clock } from "lucide-react";
 import { useRef } from "react";
 import type { BlogPost } from "@/types";
-import { blurDataUrl } from "@/lib/utils";
+import { blurDataUrl, defaultBlogImage } from "@/lib/utils";
 import useReducedMotion from "@/hooks/useReducedMotion";
 
 type BlogCardProps = {
@@ -38,7 +38,7 @@ export default function BlogCard({ post }: BlogCardProps) {
             style={prefersReducedMotion ? undefined : { y }}
           >
             <Image
-              src={post.image}
+              src={post.image || defaultBlogImage}
               alt={post.alt}
               fill
               sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"

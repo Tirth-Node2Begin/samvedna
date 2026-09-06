@@ -1,10 +1,19 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-export const siteUrl = "https://samvednahomeopathy.com";
+// Drives metadataBase, canonical tags and every JSON-LD url. Set
+// NEXT_PUBLIC_SITE_URL at build time when deploying to a different domain -
+// a mismatch here tells search engines the real site lives somewhere else.
+export const siteUrl = (
+  process.env.NEXT_PUBLIC_SITE_URL || "https://samvedna.node2begin.com"
+).replace(/\/+$/, "");
 
 export const blurDataUrl =
   "data:image/gif;base64,R0lGODlhAQABAIAAAPj7+QAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==";
+
+// Fallback cover used when a blog post has no image (e.g. an admin post created
+// without uploading a thumbnail), so cards never render an empty/blank frame.
+export const defaultBlogImage = "/images/samvedna-auditorium.webp";
 
 export const contact = {
   phonePrimary: "+91-78748-76777",

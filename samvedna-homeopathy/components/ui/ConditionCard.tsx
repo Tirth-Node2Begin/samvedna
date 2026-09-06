@@ -1,9 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import type { ElementType, ReactNode } from "react";
 import type { Condition } from "@/types";
-import { cn } from "@/lib/utils";
+import { blurDataUrl, cn } from "@/lib/utils";
 import { 
   Brain, Activity, MessageCircle, Sprout, 
   BookOpen, HeartPulse, Sparkles, ArrowUpRight 
@@ -91,30 +92,85 @@ export default function ConditionCard({
         variants={contentReveal}
         viewport={{ once: true, amount: 0.35 }}
       >
-        <div className="flex items-start justify-between">
+        {/* Admin-uploaded photo — optional, and the card is designed to look
+            complete without one (that is how every card looked before images
+            became manageable from the admin panel).
+            A FIXED height, not an aspect ratio: the featured card is twice as
+            wide as the rest, so a shared ratio made its image tower over the
+            others. Fixed heights keep every image in proportion to its card and
+            keep the row heights predictable. */}
+        {condition.image ? (
           <motion.div
             className={cn(
-              "flex h-12 w-12 items-center justify-center rounded-2xl transition-transform duration-500 group-hover:scale-110",
-              isFeatured ? "bg-primary/10 text-primary" : "bg-primary/5 text-primary"
+              "relative -mx-6 -mt-6 overflow-hidden sm:-mx-8 sm:-mt-8",
+              isLarge ? "h-52 lg:h-64" : "h-44"
             )}
             variants={itemReveal}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
           >
-            <Icon className="h-6 w-6" strokeWidth={1.5} />
+            <Image
+              src={condition.image}
+              alt={condition.alt || condition.name}
+              fill
+              sizes={isLarge ? "(min-width: 1024px) 50vw, 100vw" : "(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw"}
+              className="object-cover transition duration-700 group-hover:scale-105"
+              placeholder="blur"
+              blurDataURL={blurDataUrl}
+              loading="lazy"
+            />
+            {/* The icon rides on the image instead of sitting in a row beneath
+                it, so the photo runs straight into the heading as one block
+                rather than reading as a separate banner. */}
+            <span
+              className={cn(
+                "absolute bottom-4 left-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/90 text-primary shadow-sm backdrop-blur transition-transform duration-500 group-hover:scale-110 sm:left-8"
+              )}
+            >
+              <Icon className="h-6 w-6" strokeWidth={1.5} aria-hidden="true" />
+            </span>
           </motion.div>
+        ) : null}
+
+        {/* Without an image the icon keeps its original row; with one it has
+            moved onto the photo, so only the hover arrow remains — pinned to the
+            card corner so it does not reintroduce a gap above the heading. */}
+        {condition.image ? (
           <motion.div
             className={cn(
-              "flex h-8 w-8 items-center justify-center rounded-full opacity-0 -translate-x-4 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100",
-              isFeatured ? "bg-primary/10 text-primary" : "bg-primary/5 text-primary"
+              "absolute right-0 top-0 z-20 flex h-8 w-8 items-center justify-center rounded-full opacity-0 -translate-x-4 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100",
+              "bg-white/90 text-primary shadow-sm backdrop-blur"
             )}
             variants={itemReveal}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
             <ArrowUpRight className="h-4 w-4" />
           </motion.div>
-        </div>
+        ) : (
+          <div className="flex items-start justify-between">
+            <motion.div
+              className={cn(
+                "flex h-12 w-12 items-center justify-center rounded-2xl transition-transform duration-500 group-hover:scale-110",
+                isFeatured ? "bg-primary/10 text-primary" : "bg-primary/5 text-primary"
+              )}
+              variants={itemReveal}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <Icon className="h-6 w-6" strokeWidth={1.5} />
+            </motion.div>
+            <motion.div
+              className={cn(
+                "flex h-8 w-8 items-center justify-center rounded-full opacity-0 -translate-x-4 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100",
+                isFeatured ? "bg-primary/10 text-primary" : "bg-primary/5 text-primary"
+              )}
+              variants={itemReveal}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <ArrowUpRight className="h-4 w-4" />
+            </motion.div>
+          </div>
+        )}
 
-        <div className="mt-4">
+        <div className={condition.image ? "" : "mt-4"}>
           <motion.h3
             className={cn(
               "font-display text-xl font-bold leading-tight text-text",

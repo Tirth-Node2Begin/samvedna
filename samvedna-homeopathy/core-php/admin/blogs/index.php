@@ -23,14 +23,15 @@ require __DIR__ . '/../partials/header.php';
   <?php if (empty($blogs)): ?>
     <div class="empty">No blog posts yet. <a href="<?= e(au('blogs/new')) ?>">Create the first one</a>.</div>
   <?php else: ?>
+    <div class="table-scroll">
     <table>
       <thead>
-        <tr><th>Image</th><th>Title</th><th>Category</th><th>Status</th><th>Published</th><th>Actions</th></tr>
+        <tr><th class="col-hide-md">Image</th><th>Title</th><th class="col-hide-sm">Category</th><th class="col-hide-sm">Status</th><th class="col-hide-md">Published</th><th>Actions</th></tr>
       </thead>
       <tbody>
         <?php foreach ($blogs as $b): ?>
           <tr>
-            <td>
+            <td class="col-hide-md">
               <?php if (!empty($b['image'])): ?>
                 <img class="thumb" src="<?= e(image_url($b['image'])) ?>" alt="">
               <?php else: ?>
@@ -41,9 +42,9 @@ require __DIR__ . '/../partials/header.php';
               <a href="<?= e(au('blogs/edit/' . (int) $b['id'])) ?>"><strong><?= e($b['title']) ?></strong></a>
               <div class="hint"><?= e($b['slug']) ?></div>
             </td>
-            <td><?= e($b['category']) ?></td>
-            <td><span class="badge badge-<?= e($b['status']) ?>"><?= e($b['status']) ?></span></td>
-            <td><?= e($b['published_at'] ?? '-') ?></td>
+            <td class="col-hide-sm"><?= e($b['category']) ?></td>
+            <td class="col-hide-sm"><span class="badge badge-<?= e($b['status']) ?>"><?= e($b['status']) ?></span></td>
+            <td class="col-hide-md"><?= e($b['published_at'] ?? '-') ?></td>
             <td>
               <div class="actions">
                 <a class="btn btn-secondary btn-sm" href="<?= e(au('blogs/edit/' . (int) $b['id'])) ?>">Edit</a>
@@ -58,6 +59,7 @@ require __DIR__ . '/../partials/header.php';
         <?php endforeach; ?>
       </tbody>
     </table>
+    </div>
   <?php endif; ?>
 </div>
 

@@ -1,0 +1,3 @@
+backend/.env
+backend/config/config.local.php
+backend/uploads/

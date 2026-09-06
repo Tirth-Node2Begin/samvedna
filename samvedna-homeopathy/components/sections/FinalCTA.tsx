@@ -39,7 +39,7 @@ export default function FinalCTA() {
                 history, current therapies, reports, and daily challenges.
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-4">
-                <Button href="https://autismhomeohelp.com/online-consulting/" size="lg" className="w-full sm:w-auto">
+                <Button href="/consultation/" size="lg" className="w-full sm:w-auto">
                   Book Consultation
                 </Button>
                 <Button

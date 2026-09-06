@@ -137,7 +137,8 @@ textarea {
   padding: 18px 14px;
 }
 
-.sidebar nav a {
+.sidebar nav a,
+.sidebar-account a {
   position: relative;
   display: flex;
   min-height: 44px;
@@ -153,14 +154,16 @@ textarea {
   transition: background 0.16s ease, border-color 0.16s ease, color 0.16s ease, transform 0.16s ease;
 }
 
-.sidebar nav a:hover {
+.sidebar nav a:hover,
+.sidebar-account a:hover {
   border-color: var(--primary-border);
   background: var(--primary-soft);
   color: var(--primary);
   transform: translateX(2px);
 }
 
-.sidebar nav a.active {
+.sidebar nav a.active,
+.sidebar-account a.active {
   border-color: rgba(20, 184, 166, 0.28);
   background: linear-gradient(135deg, rgba(236, 254, 255, 0.95), rgba(240, 253, 250, 0.95));
   color: #0f766e;
@@ -186,7 +189,8 @@ textarea {
   stroke-width: 2;
 }
 
-.sidebar nav a.active .nav-icon {
+.sidebar nav a.active .nav-icon,
+.sidebar-account a.active .nav-icon {
   border-color: rgba(20, 184, 166, 0.32);
   background: #ffffff;
   color: var(--accent);
@@ -201,6 +205,95 @@ textarea {
   color: var(--muted);
   font-size: 12px;
   font-weight: 600;
+}
+
+/* Account section pinned below the main nav: signed-in name + Profile + Log out
+   (moved here from the top bar). */
+.sidebar-account {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 14px 6px;
+}
+
+.sidebar-account a.nav-logout:hover {
+  border-color: rgba(220, 38, 38, 0.28);
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.sidebar-account a.nav-logout:hover .nav-icon {
+  border-color: rgba(220, 38, 38, 0.28);
+  color: var(--danger);
+}
+
+/* Mobile drawer controls — hidden on desktop, revealed in the <=900 media query. */
+.nav-toggle {
+  display: none;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: var(--control-radius);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  padding: 0;
+  transition: border-color 0.16s ease, background 0.16s ease, color 0.16s ease;
+}
+
+.nav-toggle:hover {
+  border-color: var(--primary-border);
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.nav-toggle svg {
+  width: 22px;
+  height: 22px;
+  stroke-width: 2;
+}
+
+.sidebar-close {
+  display: none;
+  position: absolute;
+  top: 18px;
+  right: 14px;
+  z-index: 2;
+  width: 34px;
+  height: 34px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: var(--control-radius);
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0;
+  transition: border-color 0.16s ease, color 0.16s ease, background 0.16s ease;
+}
+
+.sidebar-close:hover {
+  border-color: var(--danger);
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.sidebar-close svg {
+  width: 18px;
+  height: 18px;
+}
+
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(2px);
+  transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
 .main {
@@ -261,6 +354,12 @@ textarea {
 .topbar .user a:hover {
   border-color: var(--primary-border);
   background: var(--primary-soft);
+}
+
+.topbar .user a.is-active {
+  border-color: var(--primary-border);
+  background: var(--primary-soft);
+  color: var(--primary);
 }
 
 .content {
@@ -526,6 +625,12 @@ a.stat:hover {
   min-width: 0;
 }
 
+/* The dashboard summary table should fit its card (which narrows when the side
+   column is present) rather than forcing a 720px min-width + horizontal scroll. */
+.dashboard-main-card table {
+  min-width: 0;
+}
+
 .dashboard-side {
   display: grid;
   gap: 18px;
@@ -786,6 +891,7 @@ td .thumb,
   line-height: 1;
   padding: 6px 10px;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .badge-published {
@@ -1249,66 +1355,63 @@ body.login-body {
     display: block;
   }
 
+  .nav-toggle {
+    display: inline-flex;
+  }
+
   .sidebar {
-    position: sticky;
-    z-index: 20;
-    width: 100%;
-    height: auto;
-    border-right: 0;
-    border-bottom: 1px solid var(--border);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 60;
+    width: min(84vw, 300px);
+    height: 100vh;
+    height: 100dvh;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+    border-bottom: 0;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+    overflow-y: auto;
+  }
+
+  .is-nav-open .sidebar {
+    transform: translateX(0);
+    box-shadow: 24px 0 60px rgba(15, 23, 42, 0.24);
   }
 
   .sidebar .brand {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 16px 18px;
+    padding-right: 58px;
   }
 
-  .brand-meta {
-    justify-content: flex-end;
+  .sidebar-close {
+    display: inline-flex;
   }
 
-  .brand-note {
-    display: none;
+  .sidebar-backdrop {
+    display: block;
+    opacity: 0;
+    visibility: hidden;
   }
 
-  .brand-logo {
-    width: 150px;
-  }
-
-  .sidebar nav {
-    display: flex;
-    flex-direction: row;
-    gap: 8px;
-    overflow-x: auto;
-    padding: 10px 14px 14px;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-
-  .sidebar nav::-webkit-scrollbar {
-    display: none;
-  }
-
-  .sidebar nav a {
-    flex: 0 0 auto;
-  }
-
-  .sidebar nav a:hover {
-    transform: none;
-  }
-
-  .sidebar .foot {
-    display: none;
+  .is-nav-open .sidebar-backdrop {
+    opacity: 1;
+    visibility: visible;
   }
 
   .topbar {
-    position: static;
-    align-items: flex-start;
-    flex-direction: column;
-    padding: 20px;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    padding: 14px 18px;
+  }
+
+  .topbar h1 {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 19px;
   }
 
   .topbar .user {
@@ -1332,10 +1435,6 @@ body.login-body {
 
   .dashboard-side {
     grid-template-columns: 1fr;
-  }
-
-  .card {
-    overflow-x: auto;
   }
 
   .login-wrap {
@@ -1407,28 +1506,173 @@ body.login-body {
   }
 
   .login-brand-panel {
-    padding: 24px;
-  }
-
-  .login-brand-logo {
-    width: 180px;
-  }
-
-  .login-metrics {
-    grid-template-columns: 1fr;
-  }
-
-  .login-panel-note {
-    width: 100%;
-    align-items: flex-start;
-    border-radius: var(--radius);
-  }
-
-  .login-panel-note span:last-child {
-    overflow-wrap: anywhere;
+    display: none;
   }
 
   .login-card {
     padding: 30px 22px;
+  }
+}
+
+/* -------------------------------------------------------------- Leads --- */
+.lead-intro {
+  margin: -6px 0 18px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.lead-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.lead-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  font-family: "Outfit", "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.lead-tab:hover {
+  border-color: var(--primary-border);
+  color: var(--primary);
+}
+
+.lead-tab.active {
+  background: var(--primary-soft);
+  border-color: var(--primary-border);
+  color: var(--primary);
+}
+
+.lead-tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.12);
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.lead-tab.active .lead-tab-count {
+  background: var(--primary);
+  color: #fff;
+}
+
+.table-scroll {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+
+.leads-table {
+  min-width: 900px;
+}
+
+.leads-table td {
+  vertical-align: top;
+  font-size: 13px;
+}
+
+.leads-table .nowrap {
+  white-space: nowrap;
+}
+
+.leads-table .lead-time,
+.leads-table .lead-email {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.leads-table a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.leads-table a:hover {
+  text-decoration: underline;
+}
+
+.leads-table .lead-message {
+  max-width: 240px;
+  color: var(--text);
+  white-space: normal;
+}
+
+.leads-table .muted {
+  color: var(--muted);
+}
+
+/* --------------------------------------------- Responsive table columns --- */
+/* Priority columns: on tablets/phones we hide lower-priority cells (tagged
+   .col-hide-md / .col-hide-sm on both the <th> and its <td>s) so the primary
+   column and the Edit/Delete actions stay visible WITHOUT horizontal scroll.
+   Dropping the min-width lets the reduced set of columns fit the viewport. */
+@media (max-width: 768px) {
+  table,
+  .leads-table {
+    min-width: 0;
+  }
+
+  th,
+  td {
+    padding: 12px 16px;
+  }
+
+  .col-hide-md {
+    display: none !important;
+  }
+}
+
+@media (max-width: 560px) {
+  th,
+  td {
+    padding: 10px 12px;
+  }
+
+  /* Let long unbreakable tokens (slugs, emails, URLs) wrap so the primary
+     column can shrink and the row fits without horizontal scrolling. */
+  td {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .col-hide-sm {
+    display: none !important;
+  }
+
+  /* Let the contact column wrap on phones so long emails don't force a scroll. */
+  .leads-table .nowrap {
+    white-space: normal;
+  }
+
+  /* Stack the Edit/Delete buttons so they never crowd the primary column. */
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .actions .btn {
+    width: 100%;
   }
 }

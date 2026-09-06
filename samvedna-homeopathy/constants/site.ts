@@ -1,13 +1,22 @@
 import type { NavItem } from "@/types";
 
+/**
+ * Primary navigation.
+ *
+ * Every section link is root-relative (`/#id`), NOT a bare `#id`. The navbar is
+ * rendered on every route, and a bare hash on a page that has no such section
+ * — /consultation, /blog/[slug] — only rewrites the URL fragment and leaves the
+ * visitor where they are. `/#id` sends them back to the homepage section from
+ * anywhere, and still scrolls without a reload when already on the homepage.
+ */
 export const navItems: NavItem[] = [
-  { label: "HOME", href: "#home" },
-  { label: "CONDITIONS", href: "#conditions" },
-  { label: "ABOUT DOCTOR", href: "#doctors" },
-  { label: "CARE PROCESS", href: "#journey" },
-  { label: "PARENT STORIES", href: "#testimonials" },
-  { label: "FAQ", href: "#faq" },
-  { label: "CONTACT", href: "#consultation" }
+  { label: "HOME", href: "/#home" },
+  { label: "CONDITIONS", href: "/#conditions" },
+  { label: "ABOUT DOCTOR", href: "/#doctors" },
+  { label: "CARE PROCESS", href: "/#journey" },
+  { label: "PARENT STORIES", href: "/#testimonials" },
+  { label: "FAQ", href: "/#faq" },
+  { label: "CONTACT", href: "/#consultation" }
 ];
 
 export const heroStats = [

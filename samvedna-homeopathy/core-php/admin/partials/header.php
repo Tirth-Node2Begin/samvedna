@@ -20,6 +20,9 @@ $nav = [
     'blogs'        => ['label' => 'Blogs',              'href' => au('blogs'),        'icon' => 'blogs'],
     'testimonials' => ['label' => 'Video Testimonials', 'href' => au('testimonials'), 'icon' => 'video'],
     'doctors'      => ['label' => 'Doctors',            'href' => au('doctors'),      'icon' => 'doctors'],
+    'conditions'   => ['label' => 'Conditions',         'href' => au('conditions'),   'icon' => 'conditions'],
+    'leads'        => ['label' => 'Leads',              'href' => au('leads'),        'icon' => 'leads'],
+    'consultations'=> ['label' => 'Consultations',      'href' => au('consultations'),'icon' => 'consultations'],
 ];
 
 if (!function_exists('admin_nav_icon')) {
@@ -30,6 +33,11 @@ if (!function_exists('admin_nav_icon')) {
             'blogs' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg>',
             'video' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3Z"/></svg>',
             'doctors' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-8 0v2"/><circle cx="12" cy="7" r="4"/><path d="M19 8v6"/><path d="M16 11h6"/></svg>',
+            'conditions' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.5-7 10-7 10Z"/><path d="M9 12h1.5l1-2 1.5 4 1-2H15"/></svg>',
+            'leads' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>',
+            'consultations' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h4"/></svg>',
+            'profile' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg>',
+            'logout' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>',
         ];
 
         return $icons[$name] ?? $icons['dashboard'];
@@ -50,12 +58,11 @@ if (!function_exists('admin_nav_icon')) {
 </head>
 <body>
 <div class="layout">
-  <aside class="sidebar">
+  <aside class="sidebar" id="adminSidebar">
     <div class="brand">
       <img src="/images/samvedna-logo.webp" alt="Samvedna Homeopathy" class="brand-logo">
       <div class="brand-meta">
         <span class="brand-badge">Admin</span>
-        <span class="brand-note">Core PHP CMS</span>
       </div>
     </div>
     <nav>
@@ -66,16 +73,30 @@ if (!function_exists('admin_nav_icon')) {
         </a>
       <?php endforeach; ?>
     </nav>
+
+    <div class="sidebar-account">
+      <a href="<?= e(au('profile')) ?>" class="<?= $ACTIVE === 'profile' ? 'active' : '' ?>">
+        <span class="nav-icon"><?= admin_nav_icon('profile') ?></span>
+        <span>Profile</span>
+      </a>
+      <a href="<?= e(au('logout')) ?>" class="nav-logout">
+        <span class="nav-icon"><?= admin_nav_icon('logout') ?></span>
+        <span>Log out</span>
+      </a>
+    </div>
+
     <div class="foot">v1.0 - Samvedna Homeopathy</div>
   </aside>
 
+  <div class="sidebar-backdrop" data-nav-backdrop></div>
+
   <div class="main">
     <div class="topbar">
+      <button type="button" class="nav-toggle" data-nav-toggle aria-label="Open menu" aria-expanded="false" aria-controls="adminSidebar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
       <h1><?= e($TITLE) ?></h1>
-      <div class="user">
-        Signed in as <strong><?= e($admin['name'] ?? 'Admin') ?></strong>
-        <a href="<?= e(au('logout')) ?>">Log out</a>
-      </div>
+      <div class="user">Signed in as <strong><?= e($admin['name'] ?? 'Admin') ?></strong></div>
     </div>
     <div class="content">
       <?php foreach (take_flashes() as $f): ?>

@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { navItems } from "@/constants/site";
 import Button from "@/components/ui/Button";
 import { fadeUp, staggerContainer } from "@/lib/animations";
@@ -24,14 +25,14 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
         >
           <div className="mx-auto flex max-w-content items-center justify-between">
-            <a href="#home" onClick={onClose} className="flex items-center gap-3">
+            <Link href="/#home" onClick={onClose} className="flex items-center gap-3">
               <Image
                 src="/images/samvedna-logo.webp"
                 alt="Samvedna Homeopathy"
                 width={126}
                 height={40}
               />
-            </a>
+            </Link>
             <button
               type="button"
               aria-label="Close menu"
@@ -52,31 +53,31 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           >
             {navItems.map((item) => (
               <motion.div key={item.label} variants={fadeUp} className="border-b border-border py-4">
-                <a
+                <Link
                   href={item.href}
                   onClick={onClose}
                   className="block font-display text-2xl font-semibold text-text uppercase tracking-wide"
                 >
                   {item.label}
-                </a>
+                </Link>
                 {item.subItems && (
                   <div className="mt-3 flex flex-col gap-2 pl-4 border-l-2 border-primary/20">
                     {item.subItems.map((subItem) => (
-                      <a
+                      <Link
                         key={subItem.label}
                         href={subItem.href}
                         onClick={onClose}
                         className="text-lg font-medium text-text/70 hover:text-primary py-1"
                       >
                         {subItem.label}
-                      </a>
+                      </Link>
                     ))}
                   </div>
                 )}
               </motion.div>
             ))}
             <motion.div variants={fadeUp} className="mt-8">
-              <Button href="https://autismhomeohelp.com/online-consulting/" size="lg" onClick={onClose}>
+              <Button href="/consultation/" size="lg" onClick={onClose}>
                 Book Consultation
               </Button>
             </motion.div>

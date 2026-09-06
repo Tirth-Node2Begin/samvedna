@@ -1,10 +1,15 @@
 import AnimatedReveal from "@/components/ui/AnimatedReveal";
 import AnimatedText from "@/components/ui/AnimatedText";
 import BlogsCarousel from "@/components/ui/BlogsCarousel";
-import { blogPosts } from "@/constants/blogs";
 import type { BlogPost } from "@/types";
 
-export default function Blogs({ posts = blogPosts }: { posts?: BlogPost[] }) {
+export default function Blogs({ posts }: { posts: BlogPost[] }) {
+  // Admin-managed: with no published posts there is nothing to introduce, so the
+  // whole section (heading included) stays out of the page.
+  if (posts.length === 0) {
+    return null;
+  }
+
   return (
     <section id="blogs" className="scroll-mt-24 bg-bg-soft py-16 md:scroll-mt-28 md:py-20 lg:py-[120px]">
       <div className="mx-auto max-w-content px-5 md:px-8">

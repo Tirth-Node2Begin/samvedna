@@ -3,24 +3,29 @@
  * Front-controller / router for the PHP built-in server so the admin can use
  * clean, extension-less URLs:
  *
- *   /admin                       -> dashboard
- *   /admin/login | /admin/logout
- *   /admin/blogs                 -> list
- *   /admin/blogs/new             -> create form
- *   /admin/blogs/edit/{id}       -> edit form
- *   /admin/blogs/save   (POST)   -> insert/update
- *   /admin/blogs/delete (POST)   -> delete
+ *   /samvedna                       -> dashboard
+ *   /samvedna/login | /samvedna/logout
+ *   /samvedna/blogs                 -> list
+ *   /samvedna/blogs/new             -> create form
+ *   /samvedna/blogs/edit/{id}       -> edit form
+ *   /samvedna/blogs/save   (POST)   -> insert/update
+ *   /samvedna/blogs/delete (POST)   -> delete
+ *
+ * The admin URL prefix is ADMIN_BASE (/samvedna); the folder on disk is admin/.
  *   ...same for testimonials and doctors
  *
  * Start the server with this router:
- *   php -S localhost:8080 -t core-php core-php/router.php   (from project root)
+ *   php -S 127.0.0.1:8000 -t core-php core-php/router.php   (from project root)
  *
  * Real files (CSS, uploads, /api/*.php, images) are served/executed as-is.
  */
 
 declare(strict_types=1);
 
-$docroot = __DIR__; // core-php
+require_once __DIR__ . '/config/config.php'; // for ADMIN_BASE
+
+$docroot = __DIR__;      // core-php
+$base    = ADMIN_BASE;   // admin URL prefix, e.g. /samvedna (folder on disk is admin/)
 $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';
 $path = urldecode($path);
 
@@ -31,9 +36,38 @@ if (strpos($path, '..') !== false) {
     return true;
 }
 
+$MIMES = [
+    'webp' => 'image/webp', 'png' => 'image/png', 'jpg' => 'image/jpeg',
+    'jpeg' => 'image/jpeg', 'gif' => 'image/gif', 'svg' => 'image/svg+xml',
+    'ico'  => 'image/x-icon', 'css' => 'text/css', 'js' => 'application/javascript',
+    'woff2' => 'font/woff2', 'json' => 'application/json',
+];
+
+if (!function_exists('serve_static')) {
+    function serve_static(string $file, array $mimes): void
+    {
+        $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+        if (isset($mimes[$ext])) {
+            header('Content-Type: ' . $mimes[$ext]);
+        }
+        readfile($file);
+    }
+}
+
 // 1) Serve any real, existing file directly (CSS, images, uploads, /api/*.php).
 if ($path !== '/' && is_file($docroot . $path)) {
     return false; // let the built-in server serve/execute it
+}
+
+// 1b) Admin static assets (e.g. /samvedna/assets/admin.css) live on disk under
+// admin/, but are addressed under the ADMIN_BASE prefix. Map the prefix to the
+// folder so the CSS/images load whether accessed directly or via the dev proxy.
+if ($path !== '/' && strpos($path, $base . '/') === 0) {
+    $assetFile = $docroot . '/admin' . substr($path, strlen($base));
+    if (is_file($assetFile)) {
+        serve_static($assetFile, $MIMES);
+        return true;
+    }
 }
 
 // Also serve Next.js public assets (e.g. /images/samvedna-logo.webp) when accessing PHP server directly on 8080
@@ -123,7 +157,7 @@ function render_404(): bool {
     <img src="/images/samvedna-logo.webp" alt="Samvedna Homeopathy">
     <h1>Page Not Found</h1>
     <p>The admin page or resource you requested could not be found.</p>
-    <a href="/admin" class="btn">Return to Dashboard</a>
+    <a href="/samvedna" class="btn">Return to Dashboard</a>
   </div>
 </body>
 </html>
@@ -131,21 +165,19 @@ HTML;
     return true;
 }
 
-$base = '/admin';
-
 // Root of the site -> send to the admin.
 if ($path === '/' ) {
-    header('Location: /admin');
+    header('Location: ' . $base);
     return true;
 }
 
-// Dashboard: /admin or /admin/
+// Dashboard: /samvedna or /samvedna/
 if ($path === $base || $path === $base . '/') {
     require $docroot . '/admin/index.php';
     return true;
 }
 
-// Everything else must live under /admin/.
+// Everything else must live under the admin base (/samvedna/).
 if (strpos($path, $base . '/') !== 0) {
     return render_404();
 }
@@ -155,8 +187,9 @@ $seg   = $route === '' ? [] : explode('/', $route);
 
 // Top-level admin actions.
 $top = [
-    'login'  => '/admin/login.php',
-    'logout' => '/admin/logout.php',
+    'login'   => '/admin/login.php',
+    'logout'  => '/admin/logout.php',
+    'profile' => '/admin/profile.php',
 ];
 if (count($seg) === 1 && isset($top[$seg[0]])) {
     require $docroot . $top[$seg[0]];
@@ -164,7 +197,7 @@ if (count($seg) === 1 && isset($top[$seg[0]])) {
 }
 
 // Resource routes.
-$resources = ['blogs', 'testimonials', 'doctors'];
+$resources = ['blogs', 'testimonials', 'doctors', 'conditions', 'leads', 'consultations'];
 if (isset($seg[0]) && in_array($seg[0], $resources, true)) {
     $dir    = $docroot . '/admin/' . $seg[0] . '/';
     $action = $seg[1] ?? 'index';
@@ -182,6 +215,14 @@ if (isset($seg[0]) && in_array($seg[0], $resources, true)) {
                 $_REQUEST['id'] = $seg[2];
             }
             require $dir . 'form.php';
+            return true;
+        case 'view':
+            // Read-only detail page (used by consultations, which are not editable).
+            if (isset($seg[2]) && ctype_digit($seg[2])) {
+                $_GET['id'] = $seg[2];
+                $_REQUEST['id'] = $seg[2];
+            }
+            require $dir . 'view.php';
             return true;
         case 'save':
             require $dir . 'save.php';

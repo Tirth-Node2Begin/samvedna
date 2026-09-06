@@ -1,16 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import team from "@/constants/team";
 import AnimatedReveal from "@/components/ui/AnimatedReveal";
 import DoctorCard from "@/components/ui/DoctorCard";
 import DoctorProfileModal from "@/components/ui/DoctorProfileModal";
 import type { TeamMember } from "@/types";
 
 export default function DoctorsGrid({
-  members = team,
+  members,
 }: {
-  members?: TeamMember[];
+  members: TeamMember[];
 }) {
   const [activeDoctor, setActiveDoctor] = useState<TeamMember | null>(null);
 

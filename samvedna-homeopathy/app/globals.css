@@ -103,62 +103,132 @@ textarea {
 
 /* Rendered HTML body of an admin-authored blog article (/blog/[slug]). */
 .blog-content {
-  color: var(--color-text, #1f2937);
-  font-size: 1.0625rem;
+  color: #334155;
+  font-size: 1.125rem;
   line-height: 1.85;
+  letter-spacing: -0.003em;
 }
 .blog-content > * + * {
-  margin-top: 1.25rem;
+  margin-top: 1.35rem;
+}
+/* Lead paragraph: the first paragraph reads as a deck under the header. */
+.blog-content > p:first-of-type {
+  font-size: 1.24rem;
+  line-height: 1.7;
+  color: #1e293b;
 }
 .blog-content h2 {
-  margin-top: 2.25rem;
-  font-family: var(--font-display, inherit);
-  font-size: 1.6rem;
-  font-weight: 600;
+  margin-top: 2.75rem;
+  padding-top: 0.25rem;
+  font-family: var(--font-inter-tight, inherit);
+  font-size: 1.7rem;
+  font-weight: 700;
   line-height: 1.3;
-  color: var(--color-text, #111827);
+  letter-spacing: -0.015em;
+  color: var(--color-text, #0f172a);
 }
 .blog-content h3 {
-  margin-top: 1.75rem;
-  font-family: var(--font-display, inherit);
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: var(--color-text, #111827);
+  margin-top: 2.25rem;
+  font-family: var(--font-inter-tight, inherit);
+  font-size: 1.32rem;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--color-text, #0f172a);
+}
+/* Accent rule tucked under each H3 for a clear section rhythm. */
+.blog-content h3::after {
+  content: "";
+  display: block;
+  width: 2.25rem;
+  height: 3px;
+  margin-top: 0.6rem;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--color-primary, #2563eb),
+    var(--color-secondary, #06b6d4)
+  );
 }
 .blog-content p {
-  color: #4b5563;
+  color: #334155;
 }
 .blog-content a {
   color: var(--color-primary, #2563eb);
   text-decoration: underline;
   text-underline-offset: 2px;
+  font-weight: 500;
+}
+.blog-content a:hover {
+  color: var(--color-primary-dark, #1e40af);
 }
 .blog-content ul,
 .blog-content ol {
-  padding-left: 1.5rem;
-  color: #4b5563;
+  padding-left: 0.25rem;
+  color: #334155;
+  list-style: none;
 }
-.blog-content ul {
-  list-style: disc;
-}
-.blog-content ol {
-  list-style: decimal;
+.blog-content li {
+  position: relative;
+  padding-left: 1.85rem;
 }
 .blog-content li + li {
-  margin-top: 0.5rem;
+  margin-top: 0.7rem;
+}
+/* Custom bullet: a small brand-tinted dot. */
+.blog-content ul > li::before {
+  content: "";
+  position: absolute;
+  left: 0.35rem;
+  top: 0.72em;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: var(--color-primary, #2563eb);
+}
+/* Ordered lists get numbered counters in the same accent. */
+.blog-content ol {
+  counter-reset: blog-ol;
+}
+.blog-content ol > li {
+  counter-increment: blog-ol;
+}
+.blog-content ol > li::before {
+  content: counter(blog-ol);
+  position: absolute;
+  left: 0;
+  top: 0.05em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--color-primary, #2563eb);
+  background: color-mix(in srgb, var(--color-primary, #2563eb) 12%, transparent);
+  border-radius: 999px;
 }
 .blog-content img {
   max-width: 100%;
   height: auto;
-  border-radius: 0.75rem;
+  border-radius: 0.9rem;
 }
 .blog-content blockquote {
+  margin-top: 1.75rem;
   border-left: 3px solid var(--color-primary, #2563eb);
-  padding-left: 1rem;
-  color: #6b7280;
+  background: color-mix(in srgb, var(--color-primary, #2563eb) 5%, transparent);
+  padding: 0.9rem 1.25rem;
+  border-radius: 0 0.6rem 0.6rem 0;
+  color: #475569;
   font-style: italic;
 }
+.blog-content hr {
+  margin: 2.5rem 0;
+  border: 0;
+  border-top: 1px solid var(--color-border, #e2e8f0);
+}
 .blog-content strong {
-  color: var(--color-text, #111827);
-  font-weight: 600;
+  color: var(--color-text, #0f172a);
+  font-weight: 700;
 }

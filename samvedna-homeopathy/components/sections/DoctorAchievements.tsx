@@ -41,8 +41,8 @@ const achievementMeta = [
   },
   {
     Icon: Globe2,
-    location: "Global",
-    label: "Scientific Presenter",
+    location: "Istanbul · Spain · USA",
+    label: "Congress Presenter",
     accent: "from-violet-500 to-purple-400",
     iconBg: "bg-slate-800 text-white",
     numberColor: "text-violet-500/[0.07]",

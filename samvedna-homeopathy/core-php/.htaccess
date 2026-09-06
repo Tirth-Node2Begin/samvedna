@@ -1,0 +1,27 @@
+# Samvedna Core PHP - Apache / LiteSpeed front controller.
+#
+# The PHP built-in server gets clean admin URLs from router.php via `php -S ... router.php`.
+# Apache ignores that flag, so this file reproduces the same routing:
+#   /admin, /admin/login, /admin/blogs, /admin/blogs/edit/3, ...
+# Without it every extension-less admin URL 404s.
+
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Real files (admin/assets/*.css, uploads/*, api/*.php) are served/executed as-is.
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    # Everything else - including directories like /admin and /admin/blogs - goes
+    # through the front controller so router.php owns the routing table.
+    RewriteRule ^ router.php [L]
+</IfModule>
+
+# Server-side includes, config and migrations must never be fetchable over HTTP.
+RedirectMatch 404 ^/?(config|includes|migrations)(/|$)
+
+<FilesMatch "\.(sql|md|bat|local\.php)$">
+    Require all denied
+</FilesMatch>

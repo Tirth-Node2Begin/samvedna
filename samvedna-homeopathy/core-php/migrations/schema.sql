@@ -85,6 +85,25 @@ CREATE TABLE IF NOT EXISTS `doctors` (
   KEY `idx_sort` (`sort_order`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Conditions supported (the "Conditions we support" bento grid on the homepage).
+-- `span` drives the card size/emphasis in that grid. `image` is optional and the
+-- card falls back to its built-in icon when empty.
+CREATE TABLE IF NOT EXISTS `conditions` (
+  `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name`        VARCHAR(191) NOT NULL,
+  `description` TEXT         NULL,
+  `image`       VARCHAR(255) NULL,
+  `alt`         VARCHAR(255) NULL,
+  `span`        ENUM('featured','standard','compact') NOT NULL DEFAULT 'standard',
+  `sort_order`  INT          NOT NULL DEFAULT 0,
+  `status`      ENUM('draft','published') NOT NULL DEFAULT 'published',
+  `created_at`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at`  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_status` (`status`),
+  KEY `idx_sort` (`sort_order`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Consultation submissions (shared with the Next.js app / WordPress plugin).
 CREATE TABLE IF NOT EXISTS `inquiries` (
   `id`             INT AUTO_INCREMENT PRIMARY KEY,
@@ -98,4 +117,30 @@ CREATE TABLE IF NOT EXISTS `inquiries` (
   `preferred_time` VARCHAR(32)  NOT NULL,
   `source`         VARCHAR(32)  NOT NULL DEFAULT 'website',
   `created_at`     TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Detailed care-plan assessment intakes (the multi-step wizard that opens from a
+-- care-plan card). General-information fields are stored as real columns for the
+-- admin list, and every clinical answer lives in the `answers` JSON blob.
+CREATE TABLE IF NOT EXISTS `consultations` (
+  `id`           INT AUTO_INCREMENT PRIMARY KEY,
+  `plan`         VARCHAR(64)  NOT NULL DEFAULT '',
+  `plan_name`    VARCHAR(128) NULL,
+  `amount`       VARCHAR(32)  NULL,
+  `patient_name` VARCHAR(255) NOT NULL,
+  `father_name`  VARCHAR(255) NULL,
+  `mobile`       VARCHAR(32)  NOT NULL,
+  `alt_phone`    VARCHAR(32)  NULL,
+  `address`      TEXT         NULL,
+  `city`         VARCHAR(128) NULL,
+  `state`        VARCHAR(128) NULL,
+  `zip`          VARCHAR(32)  NULL,
+  `email`        VARCHAR(255) NULL,
+  `remarks`      TEXT         NULL,
+  `child_age`    VARCHAR(32)  NULL,
+  `answers`      LONGTEXT     NULL,
+  `source`       VARCHAR(32)  NOT NULL DEFAULT 'website',
+  `status`       VARCHAR(32)  NOT NULL DEFAULT 'new',
+  `created_at`   TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  KEY `idx_created_at` (`created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

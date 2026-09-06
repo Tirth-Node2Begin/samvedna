@@ -6,18 +6,17 @@ import { MapPin, Play, Quote } from "lucide-react";
 import AnimatedReveal from "@/components/ui/AnimatedReveal";
 import AnimatedText from "@/components/ui/AnimatedText";
 import VideoStoryModal from "@/components/ui/VideoStoryModal";
-import videoTestimonials from "@/constants/videoTestimonials";
 import type { VideoTestimonial } from "@/types";
-import { blurDataUrl } from "@/lib/utils";
+import { blurDataUrl, defaultBlogImage } from "@/lib/utils";
 
 // Standalone "Parent stories" section shown before the blog carousel. Mirrors
 // the WordPress build (`template-parts/sections/video-testimonials.php`):
 // a continuous right-to-left marquee of video cards, each opening the shared
 // video modal. Slower for fewer cards, capped so many cards still glide.
 export default function VideoTestimonials({
-  videos = videoTestimonials,
+  videos,
 }: {
-  videos?: VideoTestimonial[];
+  videos: VideoTestimonial[];
 }) {
   const [activeVideo, setActiveVideo] = useState<VideoTestimonial | null>(null);
 
@@ -34,7 +33,7 @@ export default function VideoTestimonials({
   return (
     <section
       id="testimonials"
-      className="scroll-mt-24 overflow-hidden bg-bg-soft pt-16 md:scroll-mt-28 md:pt-20 lg:pt-[120px]"
+      className="scroll-mt-24 overflow-hidden bg-bg-soft py-16 md:scroll-mt-28 md:py-20 lg:py-[120px]"
     >
       <div className="mx-auto max-w-content px-5 md:px-8">
         <AnimatedReveal className="max-w-2xl">
@@ -78,14 +77,25 @@ export default function VideoTestimonials({
                 className="group/video relative mr-6 block aspect-[4/3] w-[78vw] shrink-0 overflow-hidden rounded-card border border-border bg-slate-900 text-left shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-premium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:w-[44vw] lg:w-[31vw] xl:w-[380px]"
               >
                 <Image
-                  src={video.poster}
+                  src={video.poster || defaultBlogImage}
                   alt={clone ? "" : video.alt}
                   fill
                   sizes="(min-width: 1280px) 380px, (min-width: 1024px) 31vw, (min-width: 640px) 44vw, 78vw"
                   className="object-cover transition-transform duration-500 group-hover/video:scale-[1.05]"
                   placeholder="blur"
                   blurDataURL={blurDataUrl}
-                  loading="lazy"
+                  // Eager, NOT lazy: these cards live in a continuously
+                  // transform-animated marquee, where native lazy-loading often
+                  // never fires its intersection check and the posters stay blank.
+                  loading="eager"
+                  // A dead YouTube thumbnail (private/removed video → 404) would
+                  // otherwise leave a blank dark card; fall back to a local image.
+                  onError={(event) => {
+                    const img = event.currentTarget;
+                    if (img.dataset.fallback) return;
+                    img.dataset.fallback = "1";
+                    img.src = defaultBlogImage;
+                  }}
                 />
 
                 {/* Dark at top (for the overlaid text) and bottom (for the duration). */}

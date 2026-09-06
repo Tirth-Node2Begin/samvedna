@@ -46,15 +46,15 @@ php -S localhost:8080 -t core-php core-php/router.php
 ```
 
 - Admin panel: <http://localhost:8080/admin>
-- JSON API: `/api/blogs.php`, `/api/testimonials.php`, `/api/doctors.php`
+- JSON API: `/api/blogs.php`, `/api/testimonials.php`, `/api/doctors.php`, `/api/conditions.php`
 
 ### Through the Next.js dev server
 
 `next.config.ts` already proxies these paths to the PHP server, so while
-`pnpm dev` **and** the PHP server both run you can also use:
+`npm run dev` **and** the PHP server both run you can also use:
 
 - Admin: <http://localhost:3000/admin>
-- API: `/php-api/blogs.php`, `/php-api/testimonials.php`, `/php-api/doctors.php`
+- API: `/php-api/blogs.php`, `/php-api/testimonials.php`, `/php-api/doctors.php`, `/php-api/conditions.php`
 - Uploaded images: `/uploads/<file>`
 
 ## Structure
@@ -76,7 +76,8 @@ core-php/
 │   ├── assets/admin.css
 │   ├── blogs/                 # index, form (create/edit), save, delete
 │   ├── testimonials/          # index, form, save, delete
-│   └── doctors/               # index, form, save, delete
+│   ├── doctors/               # index, form, save, delete
+│   └── conditions/            # index, form, save, delete
 ├── api/                       # public read-only JSON endpoints
 └── uploads/                   # admin-uploaded images (gitignored)
 ```

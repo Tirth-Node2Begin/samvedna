@@ -1,0 +1,182 @@
+@config "../tailwind.config.ts";
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------- tokens -- */
+
+:root {
+  /* Shell / chrome — the ones you will actually touch. */
+  --background: #f4f4f5;        /* the app canvas — deliberately HUELESS      */
+  --foreground: #0f172a;        /* slate-900 — default ink                    */
+  --n2b-chrome: #f6f6fe;        /* rail + top bar surface (96% white/4% indigo) */
+  --n2b-chrome-hover: #efeffb;  /* nav row hover                              */
+  --n2b-chrome-active: #e8e8f7; /* nav row settled/active fill                */
+
+  /* Shell left margin. Declared here so the very first paint — before the rail
+     hydrates — is already correctly offset; Sidebar rewrites it on <html>. */
+  --n2b-sb: 86px;
+
+  --navy: #1e3a5f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-dm-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: #e0e7ff; /* indigo-100 */
+  color: #3730a3;      /* indigo-800 */
+}
+
+/* The ui-kit's own focus ring recipe — neutral, never blue. */
+:focus-visible {
+  outline: 2px solid rgba(15, 23, 42, 0.35);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* ------------------------------------------------------------ scrollbars -- */
+
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1; /* slate-300 */
+  border: 3px solid transparent;
+  background-clip: content-box;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8; /* slate-400 */
+  background-clip: content-box;
+}
+
+/* Modals hide their scrollbars but keep scrolling. */
+[role="dialog"]::-webkit-scrollbar,
+[role="dialog"] *::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+/* ---------------------------------------------------------------- fields -- */
+/* One recipe so every input in the CMS is pixel-identical: h-10 rounded-xl,
+   slate hairline, indigo focus ring at 15%.
+
+   It lives in @layer components on purpose — an unlayered rule here would
+   outrank Tailwind's utilities, and a `pl-9` on a search field (or an `h-11`
+   on a large input) would silently lose to the shorthand padding below. */
+
+@layer components {
+  .field-control {
+    width: 100%;
+    height: 2.5rem;
+    border: 1px solid #e2e8f0; /* slate-200 */
+    border-radius: 0.75rem;    /* rounded-xl */
+    background: #ffffff;
+    padding: 0 0.75rem;
+    font-size: 0.875rem;
+    color: #0f172a;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .field-control::placeholder {
+    color: #94a3b8; /* slate-400 */
+  }
+
+  .field-control:focus {
+    outline: none;
+    border-color: #6366f1; /* indigo-500 */
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
+  }
+
+  .field-control:disabled,
+  .field-control[readonly] {
+    background: #f8fafc;
+    color: #64748b;
+    cursor: not-allowed;
+  }
+
+  .field-control[data-invalid="true"] {
+    border-color: #e11d48; /* rose-600 */
+    box-shadow: 0 0 0 2px rgba(225, 29, 72, 0.12);
+  }
+
+  textarea.field-control {
+    height: auto;
+    min-height: 5.5rem;
+    padding: 0.625rem 0.75rem;
+    resize: vertical;
+    line-height: 1.6;
+  }
+
+  select.field-control {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='%2394a3b8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 34px;
+    cursor: pointer;
+  }
+}
+
+/* ----------------------------------------------------------------- lenis -- */
+/* <main> is the scroll container, not the document — Lenis is pointed at it. */
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* ---------------------------------------------------------------- motion -- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: #ffffff;
+  }
+}

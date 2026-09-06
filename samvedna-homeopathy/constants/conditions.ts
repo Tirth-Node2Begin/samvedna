@@ -1,5 +1,16 @@
-import type { Condition } from "@/types";
-
+/**
+ * The condition names offered in the enquiry form dropdown and linked from the
+ * footer.
+ *
+ * The homepage "Conditions we support" cards are NOT here any more — they are
+ * admin-managed (see core-php/admin/conditions, /api/conditions.php and
+ * getConditions() in lib/content.ts) so the client can edit copy and upload an
+ * image per condition. This list stays static because it also backs the zod
+ * enum in lib/schemas/consultation.ts: submitted values have to validate against
+ * a fixed set, and widening it from the database would let a renamed row
+ * invalidate the form. Add a name here too if the client introduces a genuinely
+ * new area of care.
+ */
 export const conditionList = [
   "Autism Spectrum Disorder Support",
   "ADHD Support",
@@ -9,50 +20,3 @@ export const conditionList = [
   "Genetic Disorders Support",
   "Neurological Disorders Support"
 ] as const;
-
-const conditions: Condition[] = [
-  {
-    name: "Autism Spectrum Disorder Support",
-    description:
-      "Individualized support for communication, social interaction, sensory needs, behavior, sleep, and family routines.",
-    span: "featured"
-  },
-  {
-    name: "ADHD Support",
-    description:
-      "Care focused on attention, hyperactivity, impulsivity, sleep, emotional regulation, and learning readiness.",
-    span: "standard"
-  },
-  {
-    name: "Learning Disability Support",
-    description:
-      "Guidance for children struggling with reading, writing, processing, classroom readiness, and confidence.",
-    span: "compact"
-  },
-  {
-    name: "Speech Delay Support",
-    description:
-      "Support for expressive speech, understanding, non-verbal communication, and connection alongside therapies.",
-    span: "compact"
-  },
-  {
-    name: "Developmental Delay Support",
-    description:
-      "Structured care for children whose milestones, regulation, and everyday developmental progress need support.",
-    span: "standard"
-  },
-  {
-    name: "Genetic Disorders Support",
-    description:
-      "Individualized supportive care for children with genetic and syndrome-related developmental challenges.",
-    span: "standard"
-  },
-  {
-    name: "Neurological Disorders Support",
-    description:
-      "Homeopathic support for pediatric neurological and neurodevelopmental concerns with careful monitoring.",
-    span: "standard"
-  }
-];
-
-export default conditions;

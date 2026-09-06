@@ -1,0 +1,430 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:transparent;font-family:var(--font-sans)}
+.app{display:flex;flex-direction:column;gap:0;padding:0 0 24px}
+.flow-nav{display:flex;align-items:center;gap:0;padding:16px 16px 0;overflow-x:auto;flex-wrap:nowrap}
+.flow-step{display:flex;align-items:center;gap:0;flex-shrink:0}
+.step-btn{padding:6px 12px;font-size:11px;font-weight:500;border:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer;white-space:nowrap;transition:all .15s}
+.step-btn:first-child{border-radius:6px 0 0 6px}
+.step-btn:last-child{border-radius:0 6px 6px 0}
+.step-btn.active{background:#1D9E75;border-color:#1D9E75;color:#fff}
+.step-arrow{font-size:12px;color:var(--color-text-secondary);padding:0 2px;flex-shrink:0}
+.screen{margin:16px;border:0.5px solid var(--color-border-tertiary);border-radius:12px;background:var(--color-background-primary);overflow:hidden}
+.screen-header{background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);padding:10px 16px;display:flex;align-items:center;justify-content:space-between}
+.screen-title{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.screen-badge{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500}
+.badge-teal{background:#E1F5EE;color:#085041}
+.badge-purple{background:#EEEDFE;color:#3C3489}
+.badge-coral{background:#FAECE7;color:#712B13}
+.badge-blue{background:#E6F1FB;color:#0C447C}
+.badge-amber{background:#FAEEDA;color:#633806}
+.badge-gray{background:var(--color-background-secondary);color:var(--color-text-secondary);border:0.5px solid var(--color-border-tertiary)}
+@media(prefers-color-scheme:dark){
+  .badge-teal{background:#04342C;color:#9FE1CB}
+  .badge-purple{background:#26215C;color:#CECBF6}
+  .badge-coral{background:#4A1B0C;color:#F5C4B3}
+  .badge-blue{background:#042C53;color:#B5D4F4}
+  .badge-amber{background:#412402;color:#FAC775}
+}
+.screen-body{padding:16px;display:flex;flex-direction:column;gap:12px}
+.form-row{display:grid;gap:10px}
+.form-row.cols2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.form-row.cols3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:11px;font-weight:500;color:var(--color-text-secondary)}
+.field-val{font-size:12px;padding:6px 10px;border:0.5px solid var(--color-border-tertiary);border-radius:6px;background:var(--color-background-primary);color:var(--color-text-primary)}
+.field-val.required{border-color:var(--color-border-info)}
+.field-val.locked{background:var(--color-background-secondary);color:var(--color-text-secondary);font-style:italic}
+.field-val.filled{background:var(--color-background-secondary)}
+.field-val.warn{border-color:var(--color-border-warning);color:var(--color-text-warning)}
+.field-val.success{border-color:var(--color-border-success);color:var(--color-text-success)}
+.section-label{font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--color-text-secondary);padding-bottom:4px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.lock-row{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--color-text-secondary);padding:6px 10px;background:var(--color-background-secondary);border-radius:6px;border:0.5px solid var(--color-border-tertiary)}
+.lock-icon{width:8px;height:8px;border-radius:1px;border:1.5px solid currentColor;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.pill{display:inline-flex;align-items:center;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px}
+.pill-green{background:#E1F5EE;color:#085041}
+.pill-red{background:#FCEBEB;color:#791F1F}
+.pill-amber{background:#FAEEDA;color:#633806}
+.pill-gray{background:var(--color-background-secondary);color:var(--color-text-secondary)}
+@media(prefers-color-scheme:dark){
+  .pill-green{background:#04342C;color:#9FE1CB}
+  .pill-red{background:#501313;color:#F7C1C1}
+  .pill-amber{background:#412402;color:#FAC775}
+}
+.checklist{display:flex;flex-direction:column;gap:4px}
+.check-item{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--color-text-primary)}
+.check-box{width:13px;height:13px;border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.check-box.done{background:#1D9E75}
+.check-box.todo{border:0.5px solid var(--color-border-secondary)}
+.check-tick{width:7px;height:5px;border-left:1.5px solid #fff;border-bottom:1.5px solid #fff;transform:rotate(-45deg) translate(1px,-1px)}
+.action-row{display:flex;gap:8px;margin-top:4px}
+.btn-primary{font-size:12px;font-weight:500;padding:8px 16px;border-radius:6px;background:#1D9E75;color:#fff;border:none;cursor:pointer}
+.btn-secondary{font-size:12px;font-weight:500;padding:8px 16px;border-radius:6px;background:transparent;color:var(--color-text-secondary);border:0.5px solid var(--color-border-secondary);cursor:pointer}
+.btn-danger{font-size:12px;font-weight:500;padding:8px 16px;border-radius:6px;background:transparent;color:var(--color-text-danger);border:0.5px solid var(--color-border-danger);cursor:pointer}
+.timeline-track{display:flex;align-items:flex-start;gap:0;padding:4px 0}
+.tl-dot{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+.tl-circle{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.tl-line{width:1px;height:30px;background:var(--color-border-tertiary);margin:0 auto}
+.tl-content{padding:0 0 20px 12px;flex:1}
+.tl-title{font-size:12px;font-weight:500;color:var(--color-text-primary)}
+.tl-sub{font-size:11px;color:var(--color-text-secondary);margin-top:1px}
+.progress-bar-wrap{height:6px;background:var(--color-background-secondary);border-radius:3px;overflow:hidden}
+.progress-bar-fill{height:100%;border-radius:3px;background:#1D9E75}
+.metric-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.metric{background:var(--color-background-secondary);border-radius:8px;padding:10px 12px;text-align:center}
+.metric-val{font-size:18px;font-weight:500;color:var(--color-text-primary)}
+.metric-lbl{font-size:10px;color:var(--color-text-secondary);margin-top:2px}
+.divider{height:0.5px;background:var(--color-border-tertiary)}
+.escalation-box{border:0.5px solid var(--color-border-warning);border-radius:8px;padding:12px;background:var(--color-background-warning)}
+.escalation-title{font-size:12px;font-weight:500;color:var(--color-text-warning)}
+.info-note{border:0.5px solid var(--color-border-info);border-radius:6px;padding:8px 12px;background:var(--color-background-info);font-size:11px;color:var(--color-text-info)}
+.flow-hint{font-size:11px;color:var(--color-text-secondary);text-align:center;padding:8px 0 0}
+.role-row{display:flex;gap:8px}
+.role-chip{flex:1;border:0.5px solid var(--color-border-tertiary);border-radius:6px;padding:6px 8px;text-align:center}
+.role-chip .role-name{font-size:11px;font-weight:500;color:var(--color-text-primary)}
+.role-chip .role-type{font-size:10px;color:var(--color-text-secondary);margin-top:1px}
+</style>
+
+<div class="app">
+<h2 class="sr-only">Samvedna CMS page flow — interactive walkthrough of all six CMS screens</h2>
+
+<div class="flow-nav" id="nav"></div>
+
+<div id="screen-area"></div>
+
+<div class="flow-hint" id="hint"></div>
+</div>
+
+<script>
+const pages = [
+  {
+    id:'intake', label:'Patient intake', badge:'badge-blue', badgeText:'Step 1',
+    title:'Patient registration & baseline', next:'New patient → care plan activation blocked until complete',
+    render(el){
+      el.innerHTML = `
+      <div class="screen-body">
+        <div class="section-label">Patient profile</div>
+        <div class="form-row cols2">
+          <div class="field"><label>Child's name</label><div class="field-val required">Aarav Mehta</div></div>
+          <div class="field"><label>Date of birth</label><div class="field-val filled">12 Mar 2018 (6 yrs)</div></div>
+          <div class="field"><label>Guardian name</label><div class="field-val filled">Priya Mehta</div></div>
+          <div class="field"><label>Contact</label><div class="field-val filled">+91 98765 43210</div></div>
+        </div>
+        <div class="divider"></div>
+        <div class="section-label">Mandatory baseline — required to activate case</div>
+        <div class="form-row cols2">
+          <div class="field"><label>Condition classification</label><div class="field-val required">Autism Spectrum Disorder</div></div>
+          <div class="field"><label>Severity level</label><div class="field-val required">Moderate</div></div>
+        </div>
+        <div class="form-row">
+          <div class="field"><label>Current therapy involvement</label><div class="field-val filled">Speech therapy (2×/week), OT (1×/week)</div></div>
+        </div>
+        <div class="section-label" style="margin-top:4px">Top 3 parent concerns <span style="font-size:10px;color:var(--color-text-secondary)">(mandatory)</span></div>
+        <div class="checklist">
+          <div class="check-item"><div class="check-box done"><div class="check-tick"></div></div> Limited verbal communication</div>
+          <div class="check-item"><div class="check-box done"><div class="check-tick"></div></div> Sensory meltdowns in public</div>
+          <div class="check-item"><div class="check-box done"><div class="check-tick"></div></div> Sleep disturbances</div>
+        </div>
+        <div class="divider"></div>
+        <div class="section-label">Baseline functional markers checklist</div>
+        <div class="form-row cols2">
+          <div class="check-item"><div class="check-box done"><div class="check-tick"></div></div> <span style="font-size:11px">Eye contact — minimal</span></div>
+          <div class="check-item"><div class="check-box done"><div class="check-tick"></div></div> <span style="font-size:11px">Social reciprocity — poor</span></div>
+          <div class="check-item"><div class="check-box done"><div class="check-tick"></div></div> <span style="font-size:11px">Repetitive behaviours — frequent</span></div>
+          <div class="check-item"><div class="check-box todo"></div> <span style="font-size:11px">Fine motor skills</span></div>
+        </div>
+        <div class="lock-row"><div class="lock-icon"></div> Case activation blocked — complete all baseline fields to proceed</div>
+        <div class="action-row">
+          <button class="btn-primary" onclick="goTo(1)">Save & select care plan →</button>
+          <button class="btn-secondary">Save draft</button>
+        </div>
+      </div>`;
+    }
+  },
+  {
+    id:'careplan', label:'Care plan', badge:'badge-purple', badgeText:'Step 2',
+    title:'Care plan selection & role assignment', next:'Plan selected → follow-up schedule auto-generated',
+    render(el){
+      el.innerHTML = `
+      <div class="screen-body">
+        <div class="section-label">Select plan</div>
+        <div class="form-row cols3">
+          <div style="border:0.5px solid var(--color-border-tertiary);border-radius:8px;padding:10px;cursor:pointer" onclick="goTo(2)">
+            <div style="font-size:11px;font-weight:500;color:var(--color-text-primary)">Starter</div>
+            <div style="font-size:18px;font-weight:500;color:var(--color-text-primary);margin:4px 0 2px">₹14,999</div>
+            <div style="font-size:10px;color:var(--color-text-secondary)">2 months · 1 review</div>
+            <div style="font-size:10px;color:var(--color-text-secondary);margin-top:4px">Case Doctor only</div>
+          </div>
+          <div style="border:2px solid #1D9E75;border-radius:8px;padding:10px;cursor:pointer;position:relative" onclick="goTo(2)">
+            <div style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:#1D9E75;color:#fff;font-size:9px;padding:2px 8px;border-radius:20px;white-space:nowrap">Most preferred</div>
+            <div style="font-size:11px;font-weight:500;color:var(--color-text-primary)">Standard</div>
+            <div style="font-size:18px;font-weight:500;color:#0F6E56;margin:4px 0 2px">₹39,999</div>
+            <div style="font-size:10px;color:var(--color-text-secondary)">6 months · 3 reviews</div>
+            <div style="font-size:10px;color:var(--color-text-secondary);margin-top:4px">Case + Senior Doctor</div>
+          </div>
+          <div style="border:0.5px solid var(--color-border-tertiary);border-radius:8px;padding:10px;cursor:pointer" onclick="goTo(2)">
+            <div style="font-size:11px;font-weight:500;color:var(--color-text-primary)">Premium</div>
+            <div style="font-size:18px;font-weight:500;color:var(--color-text-primary);margin:4px 0 2px">₹54,999</div>
+            <div style="font-size:10px;color:var(--color-text-secondary)">6 months · monthly</div>
+            <div style="font-size:10px;color:var(--color-text-secondary);margin-top:4px">+ Founder review (Q)</div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="section-label">Auto-populated after plan selection</div>
+        <div class="form-row cols2">
+          <div class="field"><label>Plan start date</label><div class="field-val filled">18 Apr 2025</div></div>
+          <div class="field"><label>Plan end date (auto)</label><div class="field-val locked">18 Oct 2025</div></div>
+          <div class="field"><label>Current cycle</label><div class="field-val locked">Cycle 1 of 3</div></div>
+          <div class="field"><label>Plan status</label><div class="field-val success">Active</div></div>
+        </div>
+        <div class="lock-row"><div class="lock-icon"></div> Follow-up frequency locked by plan — every 60 days. Reschedule allowed ±7 days only.</div>
+        <div class="divider"></div>
+        <div class="section-label">Doctor role assignment (mandatory)</div>
+        <div class="role-row">
+          <div class="role-chip"><div class="role-name">Dr. Anjali Rao</div><div class="role-type">Case Doctor (Primary)</div></div>
+          <div class="role-chip"><div class="role-name">Dr. Suresh Nair</div><div class="role-type">Senior Doctor (Secondary)</div></div>
+          <div class="role-chip" style="opacity:.5"><div class="role-name">Founder</div><div class="role-type">Escalation only</div></div>
+        </div>
+        <div class="action-row">
+          <button class="btn-primary" onclick="goTo(2)">Confirm plan & generate schedule →</button>
+          <button class="btn-secondary" onclick="goTo(0)">Back</button>
+        </div>
+      </div>`;
+    }
+  },
+  {
+    id:'schedule', label:'Follow-up schedule', badge:'badge-teal', badgeText:'Step 3',
+    title:'Auto-generated follow-up schedule', next:'Scheduled → adherence checks every 15 days, formal review at day 60',
+    render(el){
+      el.innerHTML = `
+      <div class="screen-body">
+        <div class="info-note">Schedule auto-generated based on Standard Plan (6 months). Formal reviews locked at 60-day intervals. Adherence checks are non-consult touchpoints.</div>
+        <div class="section-label">Cycle 1 — Apr 18 to Jun 17, 2025</div>
+        <div style="display:flex;flex-direction:column;gap:0">
+          <div class="timeline-track">
+            <div class="tl-dot"><div class="tl-circle" style="background:#1D9E75"></div><div class="tl-line"></div></div>
+            <div class="tl-content"><div class="tl-title">Apr 18 — Plan activation & baseline <span class="pill pill-green">Done</span></div><div class="tl-sub">Case Doctor: Dr. Anjali Rao</div></div>
+          </div>
+          <div class="timeline-track">
+            <div class="tl-dot"><div class="tl-circle" style="background:#1D9E75"></div><div class="tl-line"></div></div>
+            <div class="tl-content"><div class="tl-title">May 3 — Adherence check <span class="pill pill-green">Done</span></div><div class="tl-sub">Non-consult · Medicine compliance confirmed</div></div>
+          </div>
+          <div class="timeline-track">
+            <div class="tl-dot"><div class="tl-circle" style="background:#EF9F27"></div><div class="tl-line"></div></div>
+            <div class="tl-content"><div class="tl-title">May 18 — Adherence check <span class="pill pill-amber">Upcoming</span></div><div class="tl-sub">Non-consult · Refill status + parent concern flag</div></div>
+          </div>
+          <div class="timeline-track">
+            <div class="tl-dot"><div class="tl-circle" style="background:#B4B2A9"></div><div class="tl-line"></div></div>
+            <div class="tl-content"><div class="tl-title">Jun 17 — Bi-monthly formal review <span class="pill pill-gray">Scheduled</span></div><div class="tl-sub">Case Doctor + Senior Doctor · 60-day structured review</div></div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="section-label">Full 6-month schedule overview</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;align-items:center;gap:10px;font-size:11px">
+            <div style="width:100px;color:var(--color-text-secondary)">Cycle 1</div>
+            <div class="progress-bar-wrap" style="flex:1"><div class="progress-bar-fill" style="width:40%"></div></div>
+            <div style="color:var(--color-text-secondary);width:60px;text-align:right">Apr–Jun 25</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:11px">
+            <div style="width:100px;color:var(--color-text-secondary)">Cycle 2</div>
+            <div class="progress-bar-wrap" style="flex:1"><div class="progress-bar-fill" style="width:0%"></div></div>
+            <div style="color:var(--color-text-secondary);width:60px;text-align:right">Jun–Aug 25</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:11px">
+            <div style="width:100px;color:var(--color-text-secondary)">Cycle 3</div>
+            <div class="progress-bar-wrap" style="flex:1"><div class="progress-bar-fill" style="width:0%"></div></div>
+            <div style="color:var(--color-text-secondary);width:60px;text-align:right">Aug–Oct 25</div>
+          </div>
+        </div>
+        <div class="action-row">
+          <button class="btn-primary" onclick="goTo(3)">Open bi-monthly review →</button>
+          <button class="btn-secondary" onclick="goTo(1)">Back</button>
+        </div>
+      </div>`;
+    }
+  },
+  {
+    id:'review', label:'Bi-monthly review', badge:'badge-teal', badgeText:'Step 4',
+    title:'Bi-monthly review (forced template)', next:'Review submitted → progress dashboard auto-generated',
+    render(el){
+      el.innerHTML = `
+      <div class="screen-body">
+        <div class="form-row cols3">
+          <div class="field"><label>Patient</label><div class="field-val filled">Aarav Mehta</div></div>
+          <div class="field"><label>Cycle</label><div class="field-val locked">Cycle 1 of 3</div></div>
+          <div class="field"><label>Review date</label><div class="field-val filled">Jun 17, 2025</div></div>
+        </div>
+        <div class="divider"></div>
+        <div class="section-label">Mandatory review fields — cannot close without completing all</div>
+        <div class="form-row">
+          <div class="field"><label>Improvements observed in last 60 days</label>
+            <div class="field-val required" style="min-height:40px">Better eye contact during meals; reduced frequency of meltdowns (4/week → 2/week)</div>
+          </div>
+          <div class="field"><label>Areas of stagnation / concern</label>
+            <div class="field-val required" style="min-height:40px">Verbal output still limited; sleep cycle inconsistent</div>
+          </div>
+        </div>
+        <div class="form-row cols2">
+          <div class="field"><label>Protocol decision</label><div class="field-val required">Continued with minor dosage adjustment</div></div>
+          <div class="field"><label>Rationale for change (mandatory if changed)</label><div class="field-val required">Increase Carcinosin 200 frequency — better response observed</div></div>
+        </div>
+        <div class="form-row">
+          <div class="field"><label>Next 60-day goals</label><div class="field-val required">Improve verbal initiation; consistent 8hr sleep; reduce school meltdowns</div></div>
+          <div class="field"><label>Therapy coordination notes</label><div class="field-val filled">Spoke with speech therapist — aligning on verbal prompting strategy</div></div>
+        </div>
+        <div class="divider"></div>
+        <div class="section-label">Escalation decision</div>
+        <div class="form-row cols2">
+          <div class="field"><label>Escalate to Senior / Founder?</label><div class="field-val filled">No — progress on track</div></div>
+          <div class="field"><label>Next review date (auto)</label><div class="field-val locked">Aug 16, 2025</div></div>
+        </div>
+        <div class="section-label">Sign-off (Standard plan — Senior Doctor mandatory)</div>
+        <div class="role-row">
+          <div class="role-chip"><div class="role-name">Dr. Anjali Rao</div><div class="role-type"><span class="pill pill-green">Signed off</span></div></div>
+          <div class="role-chip"><div class="role-name">Dr. Suresh Nair</div><div class="role-type"><span class="pill pill-amber">Pending sign-off</span></div></div>
+        </div>
+        <div class="lock-row"><div class="lock-icon"></div> Review cannot be closed until Senior Doctor signs off</div>
+        <div class="action-row">
+          <button class="btn-primary" onclick="goTo(5)">Submit & generate dashboard →</button>
+          <button class="btn-danger" onclick="goTo(4)">Raise escalation</button>
+          <button class="btn-secondary" onclick="goTo(2)">Back</button>
+        </div>
+      </div>`;
+    }
+  },
+  {
+    id:'escalation', label:'Escalation', badge:'badge-coral', badgeText:'Optional',
+    title:'Escalation management', next:'Escalation raised → approval chain triggered → resolved within 7 days',
+    render(el){
+      el.innerHTML = `
+      <div class="screen-body">
+        <div class="escalation-box">
+          <div class="escalation-title">Escalation event — clinical review required</div>
+          <div style="font-size:11px;color:var(--color-text-secondary);margin-top:4px">Aarav Mehta · Cycle 1 · Raised by Dr. Anjali Rao · Jun 17, 2025</div>
+        </div>
+        <div class="section-label">Reason for escalation (checklist — select all that apply)</div>
+        <div class="checklist">
+          <div class="check-item"><div class="check-box todo"></div> <span style="font-size:11px">No measurable movement across 2 consecutive cycles</span></div>
+          <div class="check-item"><div class="check-box done"><div class="check-tick"></div></div> <span style="font-size:11px">Mixed clinical signals — protocol innovation needed</span></div>
+          <div class="check-item"><div class="check-box todo"></div> <span style="font-size:11px">Multi-comorbidity complexity</span></div>
+          <div class="check-item"><div class="check-box done"><div class="check-tick"></div></div> <span style="font-size:11px">Parent anxiety unresolved despite structured counselling</span></div>
+        </div>
+        <div class="divider"></div>
+        <div class="section-label">Approval chain</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px;padding:6px 10px;border:0.5px solid var(--color-border-tertiary);border-radius:6px">
+            <span style="font-weight:500">Dr. Suresh Nair (Senior Doctor)</span><span class="pill pill-amber">Reviewing</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px;padding:6px 10px;border:0.5px solid var(--color-border-tertiary);border-radius:6px;opacity:.5">
+            <span style="font-weight:500">Founder — if unresolved by Senior</span><span class="pill pill-gray">Standby</span>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field"><label>Clinical notes for escalation</label><div class="field-val required" style="min-height:48px">Parent reporting regression in language — needs reassessment of constitution before Cycle 2 begins</div></div>
+        </div>
+        <div class="form-row cols2">
+          <div class="field"><label>Resolution timeframe</label><div class="field-val locked">Must resolve within 7 days</div></div>
+          <div class="field"><label>Resolution status</label><div class="field-val warn">In progress</div></div>
+        </div>
+        <div class="section-label">Resolution notes</div>
+        <div class="field"><div class="field-val required" style="min-height:36px;color:var(--color-text-secondary)">To be filled on resolution…</div></div>
+        <div class="action-row">
+          <button class="btn-primary" onclick="goTo(3)">Return to review</button>
+          <button class="btn-secondary">Save escalation draft</button>
+        </div>
+      </div>`;
+    }
+  },
+  {
+    id:'dashboard', label:'Progress dashboard', badge:'badge-amber', badgeText:'Auto-generated',
+    title:'Progress dashboard — parent & internal view', next:'Dashboard shared with parent every 60 days',
+    render(el){
+      el.innerHTML = `
+      <div class="screen-body">
+        <div class="info-note">Auto-generated at end of each 60-day review cycle. Shared with parent via WhatsApp / portal.</div>
+        <div class="form-row cols2">
+          <div class="field"><label>Patient</label><div class="field-val filled">Aarav Mehta</div></div>
+          <div class="field"><label>Review period</label><div class="field-val filled">Apr 18 – Jun 17, 2025 (Cycle 1)</div></div>
+        </div>
+        <div class="metric-row">
+          <div class="metric"><div class="metric-val" style="color:#1D9E75">Improving</div><div class="metric-lbl">Overall trend</div></div>
+          <div class="metric"><div class="metric-val">2 / 3</div><div class="metric-lbl">Goals progressing</div></div>
+          <div class="metric"><div class="metric-val">100%</div><div class="metric-lbl">Medicine adherence</div></div>
+        </div>
+        <div class="divider"></div>
+        <div class="section-label">Area-wise progress</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px"><span>Eye contact</span><span style="color:#1D9E75">Improving</span></div>
+            <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:65%"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px"><span>Meltdown frequency</span><span style="color:#1D9E75">Improving</span></div>
+            <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:50%"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px"><span>Verbal communication</span><span style="color:#EF9F27">Stable</span></div>
+            <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:20%;background:#EF9F27"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px"><span>Sleep patterns</span><span style="color:#EF9F27">Stable</span></div>
+            <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:25%;background:#EF9F27"></div></div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="section-label">Next cycle objectives (Cycle 2 — Jun–Aug 2025)</div>
+        <div class="checklist">
+          <div class="check-item"><div class="check-box todo"></div> <span style="font-size:11px">Verbal initiation — 5+ self-initiated phrases/day</span></div>
+          <div class="check-item"><div class="check-box todo"></div> <span style="font-size:11px">Consistent 8-hour sleep — 5 out of 7 nights</span></div>
+          <div class="check-item"><div class="check-box todo"></div> <span style="font-size:11px">Zero meltdowns at school in final 2 weeks</span></div>
+        </div>
+        <div class="divider"></div>
+        <div class="section-label">CMS audit scorecard — Dr. Anjali Rao (this cycle)</div>
+        <div class="form-row cols3">
+          <div class="metric"><div class="metric-val" style="color:#1D9E75">100%</div><div class="metric-lbl">CMS completeness</div></div>
+          <div class="metric"><div class="metric-val" style="color:#1D9E75">On time</div><div class="metric-lbl">Review closure</div></div>
+          <div class="metric"><div class="metric-val">4.8/5</div><div class="metric-lbl">Parent satisfaction</div></div>
+        </div>
+        <div class="action-row">
+          <button class="btn-primary">Share with parent</button>
+          <button class="btn-secondary" onclick="goTo(2)">View next cycle schedule</button>
+          <button class="btn-secondary" onclick="goTo(0)">Back to patient list</button>
+        </div>
+      </div>`;
+    }
+  }
+];
+
+let current = 0;
+
+function goTo(i){
+  current = i;
+  render();
+}
+
+function render(){
+  const nav = document.getElementById('nav');
+  nav.innerHTML = pages.map((p,i) => `
+    <div class="flow-step">
+      ${i>0?'<div class="step-arrow">›</div>':''}
+      <button class="step-btn${i===current?' active':''}" onclick="goTo(${i})">${p.label}</button>
+    </div>`).join('');
+
+  const area = document.getElementById('screen-area');
+  const p = pages[current];
+  area.innerHTML = `
+    <div class="screen">
+      <div class="screen-header">
+        <div class="screen-title">${p.title}</div>
+        <div class="screen-badge ${p.badge}">${p.badgeText}</div>
+      </div>
+    </div>`;
+  pages[current].render(area.querySelector('.screen'));
+
+  document.getElementById('hint').textContent = p.next;
+}
+
+render();
+</script>

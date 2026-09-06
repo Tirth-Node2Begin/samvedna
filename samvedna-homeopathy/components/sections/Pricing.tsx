@@ -1,57 +1,10 @@
 import AnimatedReveal from "@/components/ui/AnimatedReveal";
 import AnimatedText from "@/components/ui/AnimatedText";
 import Button from "@/components/ui/Button";
+import CurrencyToggle from "@/components/ui/CurrencyToggle";
+import PriceTag from "@/components/ui/PriceTag";
+import { plans } from "@/constants/plans";
 import { cn } from "@/lib/utils";
-
-const plans = [
-  {
-    name: "Starter (Trial)",
-    tagline: "Safe start to experience structured Samvedna care.",
-    duration: "2 months",
-    price: "₹599",
-    features: [
-      "Medicines for 2 months",
-      "1 Bi-Monthly Review (60-day review)",
-      "Written instructions for medicines & routines",
-      "WhatsApp support (≤48h response)",
-    ],
-    popular: false,
-    cta: "Start with 2 Months"
-  },
-  {
-    name: "Standard",
-    tagline: "Balanced, evidence-led care with two-doctor oversight.",
-    duration: "6 months",
-    price: "₹1,499",
-    features: [
-      "Medicines for 6 months",
-      "Every 2 months (3 sessions)",
-      "Case + Senior doctor oversight",
-      "Progress dashboard",
-      "Therapy coordination (1 call/cycle)",
-      "Priority slots",
-      "WhatsApp support (24–36h response)",
-    ],
-    popular: true,
-    cta: "Choose Standard Plan"
-  },
-  {
-    name: "Premium",
-    tagline: "High-intensity supervision with founder review.",
-    duration: "6 months",
-    price: "₹1,999",
-    features: [
-      "Medicines for 6 months",
-      "Monthly follow-ups",
-      "Case + Senior + Founder review",
-      "Same-day support",
-      "Custom tweaks",
-      "Founder Q&A webinar access",
-    ],
-    popular: false,
-    cta: "Apply for Premium"
-  },
-];
 
 function CheckIcon(props: React.ComponentProps<"svg">) {
   return (
@@ -85,7 +38,10 @@ export default function Pricing() {
           </p>
         </AnimatedReveal>
 
-        <div className="mt-14 grid gap-8 md:grid-cols-2 lg:grid-cols-3 lg:gap-8 items-stretch">
+        {/* USD / INR toggle — client island */}
+        <CurrencyToggle />
+
+        <div className="mt-10 grid gap-8 md:grid-cols-2 lg:grid-cols-3 lg:gap-8 items-stretch">
           {plans.map((plan, index) => (
             <AnimatedReveal
               key={plan.name}
@@ -112,7 +68,7 @@ export default function Pricing() {
                 </div>
                 
                 <div className="mb-6 flex items-baseline text-text">
-                  <span className="text-4xl font-bold tracking-tight">{plan.price}</span>
+                  <PriceTag plan={plan} className="text-4xl font-bold tracking-tight" />
                   <span className="ml-1 text-sm font-medium text-muted">/ {plan.duration}</span>
                 </div>
                 
@@ -129,7 +85,7 @@ export default function Pricing() {
                   <Button
                     variant={plan.popular ? "primary" : "secondary"}
                     className="w-full"
-                    href="#contact"
+                    href={`/consultation/?plan=${plan.slug}`}
                   >
                     {plan.cta}
                   </Button>

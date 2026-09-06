@@ -39,7 +39,7 @@ export default function NotFound() {
               Return Home
             </Button>
             <Button
-              href="https://autismhomeohelp.com/online-consulting/"
+              href="/consultation/"
               variant="secondary"
               size="md"
               className="w-full sm:w-auto"

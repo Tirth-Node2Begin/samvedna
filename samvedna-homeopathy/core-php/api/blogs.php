@@ -21,6 +21,7 @@ $out = array_map(static function (array $b): array {
         'image'    => public_asset_url($b['image'] ?? ''),
         'alt'      => $b['alt'] ?? '',
         'category' => $b['category'] ?? '',
+        'author'   => $b['author'] ?? '',
         'date'     => $date,
         'readTime' => $b['read_time'] ?? '',
         'href'     => '/blog/' . $b['slug'],

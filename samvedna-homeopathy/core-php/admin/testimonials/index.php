@@ -23,14 +23,15 @@ require __DIR__ . '/../partials/header.php';
   <?php if (empty($items)): ?>
     <div class="empty">No testimonials yet. <a href="<?= e(au('testimonials/new')) ?>">Add the first one</a>.</div>
   <?php else: ?>
+    <div class="table-scroll">
     <table>
       <thead>
-        <tr><th>Poster</th><th>Name / Condition</th><th>Location</th><th>YouTube</th><th>Order</th><th>Status</th><th>Actions</th></tr>
+        <tr><th class="col-hide-md">Poster</th><th>Name / Condition</th><th class="col-hide-md">Location</th><th class="col-hide-sm">YouTube</th><th class="col-hide-sm">Order</th><th class="col-hide-sm">Status</th><th>Actions</th></tr>
       </thead>
       <tbody>
         <?php foreach ($items as $v): ?>
           <tr>
-            <td>
+            <td class="col-hide-md">
               <?php if (!empty($v['poster'])): ?>
                 <img class="thumb" src="<?= e(image_url($v['poster'])) ?>" alt="">
               <?php else: ?>
@@ -41,10 +42,10 @@ require __DIR__ . '/../partials/header.php';
               <a href="<?= e(au('testimonials/edit/' . (int) $v['id'])) ?>"><strong><?= e($v['name']) ?></strong></a>
               <div class="hint"><?= e($v['condition_label']) ?></div>
             </td>
-            <td><?= e($v['location']) ?></td>
-            <td><?= $v['youtube_id'] !== '' ? e($v['youtube_id']) : '<span class="hint">Coming soon</span>' ?></td>
-            <td><?= (int) $v['sort_order'] ?></td>
-            <td><span class="badge badge-<?= e($v['status']) ?>"><?= e($v['status']) ?></span></td>
+            <td class="col-hide-md"><?= e($v['location']) ?></td>
+            <td class="col-hide-sm"><?= $v['youtube_id'] !== '' ? e($v['youtube_id']) : '<span class="hint">Coming soon</span>' ?></td>
+            <td class="col-hide-sm"><?= (int) $v['sort_order'] ?></td>
+            <td class="col-hide-sm"><span class="badge badge-<?= e($v['status']) ?>"><?= e($v['status']) ?></span></td>
             <td>
               <div class="actions">
                 <a class="btn btn-secondary btn-sm" href="<?= e(au('testimonials/edit/' . (int) $v['id'])) ?>">Edit</a>
@@ -59,6 +60,7 @@ require __DIR__ . '/../partials/header.php';
         <?php endforeach; ?>
       </tbody>
     </table>
+    </div>
   <?php endif; ?>
 </div>
 

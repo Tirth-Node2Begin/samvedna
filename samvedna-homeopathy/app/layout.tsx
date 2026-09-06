@@ -4,6 +4,7 @@ import "./globals.css";
 import { dmSans, inter, interTight } from "@/app/fonts";
 import Navbar from "@/components/navigation/Navbar";
 import AnimationProvider from "@/components/providers/AnimationProvider";
+import CurrencyProvider from "@/components/providers/CurrencyProvider";
 import LenisProvider from "@/components/providers/LenisProvider";
 import { createMetadata } from "@/lib/seo/metadata";
 import { allJsonLd } from "@/lib/seo/jsonld";
@@ -33,12 +34,14 @@ export default function RootLayout({ children }: RootLayoutProps) {
         ))}
       </head>
       <body className="font-body antialiased overflow-x-hidden" suppressHydrationWarning>
-        <LenisProvider>
-          <AnimationProvider>
-            <Navbar />
-            <main>{children}</main>
-          </AnimationProvider>
-        </LenisProvider>
+        <CurrencyProvider>
+          <LenisProvider>
+            <AnimationProvider>
+              <Navbar />
+              <main>{children}</main>
+            </AnimationProvider>
+          </LenisProvider>
+        </CurrencyProvider>
       </body>
     </html>
   );

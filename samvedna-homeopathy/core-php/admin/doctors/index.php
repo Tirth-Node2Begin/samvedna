@@ -23,14 +23,15 @@ require __DIR__ . '/../partials/header.php';
   <?php if (empty($doctors)): ?>
     <div class="empty">No doctors yet. <a href="<?= e(au('doctors/new')) ?>">Add the first profile</a>.</div>
   <?php else: ?>
+    <div class="table-scroll">
     <table>
       <thead>
-        <tr><th>Photo</th><th>Name</th><th>Title</th><th>Specialization</th><th>Status</th><th>Actions</th></tr>
+        <tr><th class="col-hide-md">Photo</th><th>Name</th><th class="col-hide-sm">Title</th><th class="col-hide-md">Specialization</th><th class="col-hide-sm">Status</th><th>Actions</th></tr>
       </thead>
       <tbody>
         <?php foreach ($doctors as $d): ?>
           <tr>
-            <td>
+            <td class="col-hide-md">
               <?php if (!empty($d['image'])): ?>
                 <img class="thumb" src="<?= e(image_url($d['image'])) ?>" alt="">
               <?php else: ?>
@@ -38,9 +39,9 @@ require __DIR__ . '/../partials/header.php';
               <?php endif; ?>
             </td>
             <td><a href="<?= e(au('doctors/edit/' . (int) $d['id'])) ?>"><strong><?= e($d['name']) ?></strong></a></td>
-            <td><?= e($d['title']) ?></td>
-            <td><?= e($d['specialization']) ?></td>
-            <td><span class="badge badge-<?= e($d['status']) ?>"><?= e($d['status']) ?></span></td>
+            <td class="col-hide-sm"><?= e($d['title']) ?></td>
+            <td class="col-hide-md"><?= e($d['specialization']) ?></td>
+            <td class="col-hide-sm"><span class="badge badge-<?= e($d['status']) ?>"><?= e($d['status']) ?></span></td>
             <td>
               <div class="actions">
                 <a class="btn btn-secondary btn-sm" href="<?= e(au('doctors/edit/' . (int) $d['id'])) ?>">Edit</a>
@@ -55,6 +56,7 @@ require __DIR__ . '/../partials/header.php';
         <?php endforeach; ?>
       </tbody>
     </table>
+    </div>
   <?php endif; ?>
 </div>
 

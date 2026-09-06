@@ -1,0 +1,14 @@
+# Uploads are user-supplied. Serve them, never execute them - a .php smuggled past
+# the MIME sniff in handle_image_upload() would otherwise be a remote shell.
+php_flag engine off
+AddType text/plain .php .phtml .phar .cgi .pl .py .sh
+
+<IfModule mod_rewrite.c>
+    RewriteEngine Off
+</IfModule>
+
+<IfModule mod_headers.c>
+    # Never let a browser reinterpret an "image" as script or HTML.
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Content-Security-Policy "default-src 'none'; img-src 'self'; style-src 'none'; script-src 'none'; sandbox"
+</IfModule>

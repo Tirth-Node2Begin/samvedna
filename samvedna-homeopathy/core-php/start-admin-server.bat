@@ -10,8 +10,8 @@ REM    1. XAMPP MySQL/MariaDB must be running (start it in the
 REM       XAMPP Control Panel).
 REM    2. Keep this window open while using the admin. Ctrl+C to stop.
 REM
-REM  Then open:  http://localhost:3000/admin   (with `pnpm dev` running)
-REM         or:  http://localhost:8080/admin   (directly)
+REM  Then open:  http://localhost:3000/admin   (with `npm run dev` running)
+REM         or:  http://localhost:8000/admin   (directly)
 REM  Login:  admin / admin123
 REM ============================================================
 
@@ -31,10 +31,14 @@ if not exist "%PHP%" (
 )
 
 echo.
-echo  Starting Samvedna admin backend on http://localhost:8080 ...
-echo  Admin:  http://localhost:3000/admin   (or http://localhost:8080/admin)
+echo  Starting Samvedna admin backend on http://localhost:8000 ...
+echo  Admin:  http://localhost:3000/admin   (or http://localhost:8000/admin)
 echo  Login:  admin / admin123
 echo  Make sure XAMPP MySQL is running. Press Ctrl+C to stop.
 echo.
 
-"%PHP%" -S localhost:8080 -t core-php core-php\router.php
+REM Bind IPv4 explicitly. `localhost` can resolve to IPv6 [::1] and, if another
+REM php.exe already holds 127.0.0.1:8000, this server silently lands on a
+REM different address than the Next fetch (PHP_ADMIN_URL=http://127.0.0.1:8000)
+REM expects - which surfaces as 401s from an unrelated server.
+"%PHP%" -S 127.0.0.1:8000 -t core-php core-php\router.php

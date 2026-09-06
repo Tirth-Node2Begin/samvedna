@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { conditionList } from "@/constants/conditions";
 import { navItems, socialLinks } from "@/constants/site";
 import { contact } from "@/lib/utils";
@@ -56,12 +57,12 @@ export default function Footer() {
           <ul className="mt-5 space-y-3">
             {conditionList.map((condition) => (
               <li key={condition}>
-                <a
-                  href="#conditions"
+                <Link
+                  href="/#conditions"
                   className="text-sm text-muted transition hover:text-primary"
                 >
                   {condition}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
